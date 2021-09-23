@@ -1,3 +1,6 @@
+Requerimiento 3 - María Alejandra Moreno Bustillo, 202021603, m.morenob@uniandes.edu.co
+Requerimiento 4 - Juliana Delgadillo Cheyne
+
 #ISIS1225 - Librerias de soporte
 
 Este proyecto contiene los Tipos abstractos de datos, estructuras de datos y algoritmos requeridos por el curso ISIS1225-Estructuras de Datos y Algoritmos
