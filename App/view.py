@@ -34,25 +34,93 @@ se hace la solicitud al controlador para ejecutar la
 operación solicitada
 """
 
+#Menu de opciones
+
 def printMenu():
     print("Bienvenido")
-    print("1- Cargar información en el catálogo")
-    print("2- ")
+    print("0- Cargar información en el catálogo")
+    print("1- Listar cronológicamente los artistas")
+    print("2- Listar cronológicamente las adquisiciones")
+    print("3- Clasificar las obras de una artista por técnica")
+    print("4- Clasificar las obras por nacionalidad de sus creadores")
+    print("5- Transportar obras de un departamento")
+    print("6- Nuevo exposición en el museo")
+    print("7- Salir")
 
 catalog = None
+def initCatalog():
+    """
+    Inicializa el catalogo de obras de arte y artistas
+    """
+    return controller.initCatalog()
 
+
+def loadData(catalog):
+    """
+    Carga las obras de arte y artistas en el catalogo
+    """
+    controller.loadData(catalog)
+
+def printArtistYear():
+    pass
+
+def printArtworkDate():
+    pass
+def printArtistTec():
+    pass
+def printArtworkNationality():
+    pass
+def printTransportation():
+    pass
 """
 Menu principal
 """
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
-    if int(inputs[0]) == 1:
+    if int(inputs[0]) == 0:
         print("Cargando información de los archivos ....")
 
+    elif int(inputs[0]) == 1:
+
+        "Requerimiento 1: artistas por fecha de nacimiento"
+
+        año_inicial = int(input('Año inicial para el rango de busqueda: '))
+        año_final = int(input ('Año final para el rango de busqueda: '))
+        artist = controller.getArtistYear(catalog, año_inicial, año_final)
+
     elif int(inputs[0]) == 2:
-        pass
+
+        "Requerimiento 2: obras de arte por fecha de adquisición"
+
+        fecha_inicial = (input('Fecha inicial para el rango de busqueda: '))
+        fecha_final = (input('Fecha final para el rango de busqueda: '))
+        artwork = controller.getArtworkYear(catalog, fecha_inicial, fecha_final)
+
+    elif int(inputs[0]) == 3:
+
+        "Requerimiento 3: clasifica obras de un artista por técnica"
+        
+        name = input('Nombre del artista sobre el cual quiere realizar la consulta: ')
+        tecniques = controller.getArtistTecnique(catalog, name)
+
+    elif int(inputs[0]) == 4:
+
+        "Requerimiento 4: clasifica las obras por la nacionalidad de sus creadores"
+  
+        nationalities = controller.getArtistNationality(catalog)
+
+    elif int(inputs[0]) == 5:
+
+        'Requerimiento 5: transportar obras de un departamento '
+
+        dpto = input('Ingrese el departamento del que quiere calcular el costo de transporte de sus obras: ')
+        transport = controller.getTransportationCost(catalog, dpto)
+
+    elif int(inputs[0]) == 6:
+        'Requerimiento 6: Artistas más prolíferos '
+
 
     else:
-        sys.exit(0)
-sys.exit(0)
+        sys.exit(7)
+sys.exit(7)

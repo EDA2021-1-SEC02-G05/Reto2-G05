@@ -29,10 +29,77 @@ import csv
 El controlador se encarga de mediar entre la vista y el modelo.
 """
 
-# Inicialización del Catálogo de libros
+# Inicialización del Catálogo de obras y artistas
+
+def initCatalog():
+    """
+    Llama la funcion de inicializacion del catalogo del modelo.
+    """
+    catalog = model.newCatalog()
+    return catalog
 
 # Funciones para la carga de datos
 
+def loadData(catalog):
+    """
+    Carga los datos de los archivos y cargar los datos en la
+    estructura de datos
+    """
+    loadArtists(catalog)
+    loadArtworks(catalog)
+
+def loadArtists(catalog):
+    """
+    Carga los artistas del archivo.  Por cada artista se indica al
+    modelo que debe adicionarlo al catalogo.
+    """
+    booksfile = cf.data_dir + 'Artists-utf8-small.csv'
+    input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
+    for artist in input_file:
+        model.addArtist(catalog, artist)
+
+def loadArtworks(catalog):
+    """
+    Carga todas las obras de arte del archivo e indica al modelo
+    que los adicione al catalogo
+    """
+    tagsfile = cf.data_dir + 'Artworks-utf8-small.csv'
+    input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
+    for artwork in input_file:
+        model.addArtwork(catalog, artwork)
+
 # Funciones de ordenamiento
 
+
 # Funciones de consulta sobre el catálogo
+
+def getArtistYear(catalog,añoi,añof):
+    """
+    Retorna los artistas nacidos en el rango de años dado
+    """
+    return model.getArtistYear(catalog,añoi,añof)
+
+def getArtworkYear(catalog,fechai,fechaf):
+    """
+    Retorna las obras de arte adquiridas en un rango de fechas dadas
+    """
+    return model.getArtworkYear(catalog,fechai,fechaf)
+
+def getArtistTecnique(catalog, name):
+    """
+    Retorna las obras de arte de un artista segun su técnica
+    """
+    return model.getArtistTecnique(catalog, name)
+
+def getArtistNationality(catalog):
+    """
+    Retorna las obras de arte de un artista segun su técnica
+    """
+    return model.getArtistNationality(catalog)
+
+def getTransportationCost(catalog, dpto):
+    """
+    Retorna las obras de un departamento dado y el costo asociado a su transporte
+    """
+    return model.getTransportationCost(catalog, dpto)
+
