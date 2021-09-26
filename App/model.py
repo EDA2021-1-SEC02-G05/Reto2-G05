@@ -59,10 +59,11 @@ def newCatalog():
                'Medium': None,
                'Nationality': None}
 
+
     """
     Estas listas contienen toda la información de las obras de arte y sus artistas.
     Las listas no se encuentran ordenadas por ningún criterio, pero seran utilizadas como referencia
-    para los mapas que se van a crear
+    para los mapas que se van a crearP
     """
     catalog['Artists'] = lt.newList('ARRAY_LIST', compareArtistID)
     catalog['Artworks'] = lt.newList(('ARRAY_LIST', compareObjectID))
