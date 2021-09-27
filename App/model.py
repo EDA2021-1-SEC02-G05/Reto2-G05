@@ -29,7 +29,7 @@ import config as cf
 from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
-from DISClib.Algorithms.Sorting import shellsort as sa
+from DISClib.Algorithms.Sorting import mergesort as ms
 assert cf
 
 """
@@ -66,7 +66,7 @@ def newCatalog():
     para los mapas que se van a crearP
     """
     catalog['Artists'] = lt.newList('ARRAY_LIST', compareArtistID)
-    catalog['Artworks'] = lt.newList(('ARRAY_LIST', compareObjectID))
+    catalog['Artworks'] = lt.newList('ARRAY_LIST', compareObjectID)
 
     """
     A continuacion se crean indices por diferentes criterios
@@ -74,53 +74,209 @@ def newCatalog():
     replican informacion, solo referencian las obras de arte y los artistas
     que se encuentran en las listas anteriormente creadas
     """
-
+    """
+    Este indice crea un map cuya llave es el  ID del artista
+    """
+    catalog['ArtistID'] = mp.newMap(10000,
+                                   maptype='CHAINING',
+                                   loadfactor=3.0,
+                                   comparefunction=None)
     """
     Este indice crea un map cuya llave es el año de nacimiento del artista
     """
     catalog['ArtistDates'] = mp.newMap(10000,
                                    maptype='CHAINING',
-                                   loadfactor=4.0,
+                                   loadfactor=3.0,
                                    comparefunction=compareMapArtistDate)
 
     """
     Este indice crea un map cuya llave es el autor del libro
     """
-    catalog['authors'] = mp.newMap(800,
+    catalog['ArtistArtwork'] = mp.newMap(800,
                                    maptype='CHAINING',
                                    loadfactor=4.0,
-                                   comparefunction=compareAuthorsByName)
+                                   comparefunction=compareArtistsByName)
     """
     Este indice crea un map cuya llave es la etiqueta
     """
-    catalog['tags'] = mp.newMap(34500,
+    catalog['Medium'] = mp.newMap(100,
                                 maptype='PROBING',
                                 loadfactor=0.5,
-                                comparefunction=compareTagNames)
+                                comparefunction=compareMediums)
     """
     Este indice crea un map cuya llave es el Id de la etiqueta
-    """
+    
     catalog['tagIds'] = mp.newMap(34500,
                                   maptype='CHAINING',
                                   loadfactor=4.0,
                                   comparefunction=compareTagIds)
     """
-    Este indice crea un map cuya llave es el año de publicacion
     """
+    Este indice crea un map cuya llave es el año de publicacion
+    
     catalog['years'] = mp.newMap(40,
                                  maptype='PROBING',
                                  loadfactor=0.5,
                                  comparefunction=compareMapYear)
-
+    """
     return catalog
 
 
 # Funciones para agregar informacion al catalogo
 
-# Funciones para creacion de datos
+def addArtist(catalog, artist):
+
+    artists = {'ConstituentID':(artist['ConstituentID']).replace(" ",""),
+                    'DisplayName':(artist['DisplayName']).lower(),
+                    'Nationality':(artist['Nationality']).lower().replace(" ",""),
+                    'Gender':(artist['Gender']).lower(),
+                    'BeginDate':artist['BeginDate'],
+                    'EndDate':artist['EndDate']}
+
+    lt.addLast(catalog['Artists'], artists)
+    #mp.put(catalog['bookIds'], artist['ConstituentID'], artists)
+
+def addArtwork(catalog,artwork):
+    artworks = {'ObjectID':(artwork['ObjectID']).replace(" ",""), 
+                    'Title':(artwork['Title']).lower(), 
+                    'ConstituentID':(artwork['ConstituentID'][1:-1]).replace(" ",""),
+                    'Date': artwork[ 'Date'],
+                    'Medium':(artwork['Medium']).lower(), 
+                    'Classification': (artwork['Classification']).lower(),
+                    'Dimensions':artwork['Dimensions'],
+                    'CreditLine': (artwork['CreditLine']).lower(), 
+                    'Department':(artwork['Department']).lower(), 
+                    'DateAcquired':artwork['DateAcquired'],
+                    'Weight': artwork['Weight (kg)'],
+                    'Circumference': artwork['Circumference (cm)'],
+                    'Depth': artwork['Depth (cm)'],
+                    'Diameter':artwork['Diameter (cm)'],
+                    'Height': artwork['Height (cm)'],
+                    'Length': artwork['Length (cm)'],
+                    'Width':artwork['Width (cm)']}
+
+    lt.addLast(catalog['Artworks'], artworks)
+    #mp.put(catalog['bookIds'], book['goodreads_book_id'], book)
+    #authors = book['authors'].split(",")  # Se obtienen los autores
+    #for author in authors:
+    #    addBookAuthor(catalog, author.strip(), book)
+    #addBookYear(catalog, book)
+
+    medium = artworks['Medium']
+    addMedium(catalog, medium, artworks)
+
+def newMedium():
+    """
+    Crea una nueva estructura para modelar los libros de un autor
+    y su promedio de ratings. Se crea una lista para guardar los
+    libros de dicho autor.
+    """
+    medium = {
+              "Artworks": None}
+
+    medium['Artworks'] = lt.newList('ARRAY_LIST', compareMediums)
+    return medium
+
+def addMedium(catalog, medium_name, artwork):
+    """
+    Esta función adiciona una obra de arte a un maps que los clasifica por medio.
+    """
+    artwork_filtrada = {'ObjectID':artwork['ObjectID'], 
+                    'Title':artwork['Title'], 
+                    'ConstituentID':artwork['ConstituentID'],
+                    'Date': artwork[ 'Date'],
+                    'Medium':artwork['Medium'] }
+
+    mediums = catalog['Medium']
+    existmedium = mp.contains(mediums, medium_name)
+    if existmedium:
+        entry = mp.get(mediums, medium_name)
+        medium_value = me.getValue(entry)
+    else:
+        medium_value = newMedium()
+        mp.put(mediums, medium_name, medium_value)
+    lt.addLast(medium_value['Artworks'], artwork_filtrada)
+
 
 # Funciones de consulta
+def getMedium(catalog, Medium):
+    """
+    Retorna las obras de arte de un medio específico
+    """
+    medium_pareja = mp.get(catalog['Medium'], Medium)
+    if medium_pareja:
+        lista_obras = me.getValue(medium_pareja)
+        sortYear(lista_obras['Artworks'])
+        return lista_obras['Artworks']
+    return None
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
+def compareArtistID(id1,id2):
+    """
+    Compara dos ids de dos artistas
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+
+def compareObjectID(id1,id2):
+    """
+    Compara dos ids de dos obras de arte
+    """
+    if (id1 == id2):
+        return 0
+    elif id1 > id2:
+        return 1
+    else:
+        return -1
+
+def compareMapArtistDate(date1,entry):
+    """
+    Compara dos fechas de nacimiento de dos artistas, date1 es un año
+    y entry una pareja llave-valor
+    """
+    date2entry = me.getKey(entry)
+    if (int(date1) == int(date2entry)):
+        return 0
+    elif (int(date1) > int(date2entry)):
+        return 1
+    else:
+        return -1
+
+def compareArtistsByName(Key_artID, artist_ID):
+    """
+    Compara dos ID's de artistas. El primero es un string
+    y el segundo un entry de un map
+    """
+    arthentry = me.getKey(artist_ID)
+    if (Key_artID == arthentry):
+        return 0
+    elif (Key_artID > arthentry):
+        return 1
+    else:
+        return -1
+
+def compareMediums (medium, entry):
+    mediumentry = me.getKey(entry)
+    if (medium == mediumentry):
+        return 0
+    elif (medium > mediumentry):
+        return 1
+    else:
+        return -1
+
+def cmpArtworkYear(artwork1,artwork2):
+    return int(artwork1['Date']) < int(artwork2['Date'])
+
+
 # Funciones de ordenamiento
+
+def sortYear(lista_obras):
+
+    ms.sort(lista_obras, cmpArtworkYear)
+
+

@@ -73,6 +73,9 @@ def loadArtworks(catalog):
 
 # Funciones de consulta sobre el catálogo
 
+def getMedium(catalog, medium):
+    return model.getMedium(catalog, medium)
+
 def getArtistYear(catalog,añoi,añof):
     """
     Retorna los artistas nacidos en el rango de años dado

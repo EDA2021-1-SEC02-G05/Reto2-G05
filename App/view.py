@@ -39,7 +39,8 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("0- Cargar información en el catálogo")
-    print("1- Listar cronológicamente los artistas")
+    print("1- Obras más antiguas por técinca")
+    #print("1- Listar cronológicamente los artistas")
     print("2- Listar cronológicamente las adquisiciones")
     print("3- Clasificar las obras de una artista por técnica")
     print("4- Clasificar las obras por nacionalidad de sus creadores")
@@ -48,6 +49,7 @@ def printMenu():
     print("7- Salir")
 
 catalog = None
+
 def initCatalog():
     """
     Inicializa el catalogo de obras de arte y artistas
@@ -81,14 +83,51 @@ while True:
     if int(inputs[0]) == 0:
         print("Cargando información de los archivos ....")
 
+        catalog = initCatalog()
+        loadData(catalog)
+
+        tamano_artwork = lt.size(catalog['Artworks'])
+        tamano_artist = lt.size(catalog['Artists'])
+
+        last_3_artworks = lt.subList(catalog['Artworks'], tamano_artwork - 2, 3 )
+        last_3_artists = lt.subList(catalog['Artists'], tamano_artist - 2, 3)
+
+        print('Obras de arte cargadas: ' + str(tamano_artwork)+'\n')
+        print('Artistas cargados: ' + str(tamano_artist)+ '\n')
+        print('Últimas tres obras de arte cargadas:')
+
+        for artwork in lt.iterator(last_3_artworks):
+            print(artwork)
+
+        print("")
+        print("-----------------------------------------------------------------------------------")
+        print("")
+        print('Últimos tres artistas cargados:')
+        
+        for artist in lt.iterator(last_3_artists):
+            print(artist)
+
+
     elif int(inputs[0]) == 1:
 
-        "Requerimiento 1: artistas por fecha de nacimiento"
+        medio = (input('Medio de las obras que se pretende buscar: ')).lower()
+        numero = int(input('Número de obras más antiguas a buscar: '))
+        respuesta = controller.getMedium(catalog, medio)
+        
+        primeras_n_obras = lt.subList(respuesta, 1, numero)
+        print('Las ' + str(numero)+ ' obras más antiguas para la medio ' + medio + ' son: ')
+        for artwork in lt.iterator(primeras_n_obras):
+            print(artwork)
+        
+        """
+        
+        Requerimiento 1: artistas por fecha de nacimiento
 
         año_inicial = int(input('Año inicial para el rango de busqueda: '))
         año_final = int(input ('Año final para el rango de busqueda: '))
         artist = controller.getArtistYear(catalog, año_inicial, año_final)
-
+        """
+        
     elif int(inputs[0]) == 2:
 
         "Requerimiento 2: obras de arte por fecha de adquisición"
