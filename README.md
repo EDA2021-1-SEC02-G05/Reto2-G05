@@ -1,5 +1,5 @@
 Requerimiento 3 - María Alejandra Moreno Bustillo, 202021603, m.morenob@uniandes.edu.co
-Requerimiento 4 - Juliana Delgadillo Cheyne
+Requerimiento 4 - Juliana Delgadillo Cheyne, 202020986, j.delgadillo@uniandes.edu.co
 
 #ISIS1225 - Librerias de soporte
 
