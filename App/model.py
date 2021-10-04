@@ -31,6 +31,9 @@ from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import mergesort as ms
 assert cf
+import datetime as d
+import time
+import math
 
 """
 Se define la estructura de un catálogo de obras y artistas. 
@@ -106,7 +109,7 @@ def newCatalog():
     """
     Este indice crea un map cuya llave es el departamento y el valor son sus obras de arte
     """
-    catalog['ArtworkDpto'] = mp.newMap(34500,
+    catalog['ArtworkDpto'] = mp.newMap(300,
                                   maptype='PROBING',
                                   loadfactor=0.5,
                                   comparefunction=compareMapDptos)
@@ -162,7 +165,7 @@ def addArtwork(catalog,artwork):
     addDpto(catalog, department, artwork)
 
     medium = artwork['Medium']
-    addMedium(catalog, medium, artwork)
+    #addMedium(catalog, medium, artwork)
 
 def addArtistDate(catalog,begindate ,artist):
     begindate_int = int(begindate)
@@ -231,6 +234,7 @@ def addDpto(catalog,dpto ,artwork):
     artwork_filtrada = {'Title':artwork['Title'], 
                     'Artists':artwork['ConstituentID'],
                     'Classification': artwork['Classification'],
+                    'Department':artwork['Department'],
                     'Date': artwork[ 'Date'],
                     'Medium':artwork['Medium'],
                     'Dimensions': artwork['Dimensions']}
@@ -355,6 +359,8 @@ def getTranspCost(catalog, dpto):
         copy= transp_cost.copy()
         #sortTranspOld(copy)
         #sortTransportation(transp_cost)
+
+        return 
     pass
 
 def cost_Area(artwork):
