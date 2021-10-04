@@ -84,9 +84,9 @@ def newCatalog():
     """
     Este indice crea un map cuya llave es el año de nacimiento del artista
     """
-    catalog['ArtistDates'] = mp.newMap(10000,
-                                   maptype='CHAINING',
-                                   loadfactor=3.0,
+    catalog['ArtistDates'] = mp.newMap(100,
+                                   maptype='PROBING',
+                                   loadfactor= 0.5,
                                    comparefunction=compareMapArtistDate)
 
     """
@@ -97,20 +97,20 @@ def newCatalog():
                                    loadfactor=4.0,
                                    comparefunction=compareArtistsByName)
     """
-    Este indice crea un map cuya llave es la etiqueta
+    Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
     """
-    catalog['Medium'] = mp.newMap(100,
+    catalog['ArtistMedium'] = mp.newMap(100,
                                 maptype='PROBING',
                                 loadfactor=0.5,
-                                comparefunction=compareMediums)
+                                comparefunction=compareMapMediums)
     """
-    Este indice crea un map cuya llave es el Id de la etiqueta
+    Este indice crea un map cuya llave es el departamento y el valor son sus obras de arte
+    """
+    catalog['ArtworkDpto'] = mp.newMap(34500,
+                                  maptype='PROBING',
+                                  loadfactor=0.5,
+                                  comparefunction=compareMapDptos)
     
-    catalog['tagIds'] = mp.newMap(34500,
-                                  maptype='CHAINING',
-                                  loadfactor=4.0,
-                                  comparefunction=compareTagIds)
-    """
     """
     Este indice crea un map cuya llave es el año de publicacion
     
@@ -134,10 +134,11 @@ def addArtist(catalog, artist):
                     'EndDate':artist['EndDate']}
 
     lt.addLast(catalog['Artists'], artists)
-    #mp.put(catalog['bookIds'], artist['ConstituentID'], artists)
+    addArtistDate(catalog,artists['BeginDate'], artists)
+
 
 def addArtwork(catalog,artwork):
-    artworks = {'ObjectID':(artwork['ObjectID']).replace(" ",""), 
+    artwork = {'ObjectID':(artwork['ObjectID']).replace(" ",""), 
                     'Title':(artwork['Title']).lower(), 
                     'ConstituentID':(artwork['ConstituentID'][1:-1]).replace(" ",""),
                     'Date': artwork[ 'Date'],
@@ -155,15 +156,43 @@ def addArtwork(catalog,artwork):
                     'Length': artwork['Length (cm)'],
                     'Width':artwork['Width (cm)']}
 
-    lt.addLast(catalog['Artworks'], artworks)
-    #mp.put(catalog['bookIds'], book['goodreads_book_id'], book)
-    #authors = book['authors'].split(",")  # Se obtienen los autores
-    #for author in authors:
-    #    addBookAuthor(catalog, author.strip(), book)
-    #addBookYear(catalog, book)
+    lt.addLast(catalog['Artworks'], artwork)
+    
+    department = artwork['Department']
+    addDpto(catalog, department, artwork)
 
-    medium = artworks['Medium']
-    addMedium(catalog, medium, artworks)
+    medium = artwork['Medium']
+    addMedium(catalog, medium, artwork)
+
+def addArtistDate(catalog,begindate ,artist):
+    begindate_int = int(begindate)
+    if int(begindate) != 0 and begindate != '':
+
+        artist_filt = {'DisplayName': artist['DisplayName'],
+                    'BeginDate': artist['BeginDate'],
+                    'EndDate': artist['EndDate'],
+                    'Nationality':artist['Nationality'],
+                    'Gender': artist['Gender']
+                    }
+
+        dates_map = catalog['ArtistDates']
+        existdate = mp.contains(dates_map, begindate_int)
+        if existdate:
+            entry = mp.get(dates_map, begindate_int)
+            date_value = me.getValue(entry)
+        else:
+            date_value = newDate(begindate_int)
+            mp.put(dates_map, begindate_int, date_value)
+        lt.addLast(date_value['Artists'], artist_filt)
+
+def newDate(date):
+
+    date = {'Date': date,
+            'Artists':None}
+
+    date['Artists'] = lt.newList('ARRAY_LIST')
+    
+    return date
 
 def newMedium():
     """
@@ -174,7 +203,7 @@ def newMedium():
     medium = {
               "Artworks": None}
 
-    medium['Artworks'] = lt.newList('ARRAY_LIST', compareMediums)
+    medium['Artworks'] = lt.newList('ARRAY_LIST')
     return medium
 
 def addMedium(catalog, medium_name, artwork):
@@ -197,8 +226,59 @@ def addMedium(catalog, medium_name, artwork):
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
 
+def addDpto(catalog,dpto ,artwork):
+
+    artwork_filtrada = {'Title':artwork['Title'], 
+                    'Artists':artwork['ConstituentID'],
+                    'Classification': artwork['Classification'],
+                    'Date': artwork[ 'Date'],
+                    'Medium':artwork['Medium'],
+                    'Dimensions': artwork['Dimensions']}
+
+    department = catalog['ArtworkDpto']
+    existdepartment = mp.contains(department, dpto)
+    if existdepartment:
+        entry = mp.get(department, dpto)
+        dpto_value = me.getValue(entry)
+    else:
+        dpto_value = newDpto()
+        mp.put(department, dpto, dpto_value)
+    lt.addLast(dpto_value['Artworks'], artwork_filtrada)
+
+def newDpto():
+    """
+    Crea una nueva estructura para modelar los libros de un autor
+    y su promedio de ratings. Se crea una lista para guardar los
+    libros de dicho autor.
+    """
+    dpto = {
+              "Artworks": None}
+
+    dpto['Artworks'] = lt.newList('ARRAY_LIST')
+    return dpto
+
+
+
 
 # Funciones de consulta
+
+def getArtistYear(catalog, year_i, year_f):
+    artist_inrange = lt.newList('ARRAY_LIST')
+    i = year_i
+
+    while i >= year_i and i <= year_f:
+        pareja_year = mp.get(catalog['ArtistDates'], i)
+
+        if pareja_year:
+            year_value = me.getValue(pareja_year)
+
+            for artist in lt.iterator(year_value['Artists']): #hay alguna forma de concatenar listas de estas?
+                lt.addLast(artist_inrange,artist)
+        
+        i += 1
+    
+    return artist_inrange
+
 def getMedium(catalog, Medium):
     """
     Retorna las obras de arte de un medio específico
@@ -209,6 +289,173 @@ def getMedium(catalog, Medium):
         sortYear(lista_obras['Artworks'])
         return lista_obras['Artworks']
     return None
+
+def getTranspCost(catalog, dpto):
+    costo_total = 0
+    peso_total = 0
+    transp_cost = lt.newList('ARRAY_LIST')
+    artwork_dpto_entry = mp.get(catalog['ArtworkDpto'], dpto)
+
+    if artwork_dpto_entry: 
+
+        artworksBydpto = me.getValue(artwork_dpto_entry)
+
+        for artwork in lt.iterator(artworksBydpto):
+            artwork_filtrada = {'Title': artwork['Title'],
+                                'Artist/s':artwork['Artists'],
+                                'Classification': artwork['Classification'],
+                                'Date':artwork['Date'],
+                                'Medium':artwork['Medium'],
+                                'Dimensions':artwork['Dimensions']}
+            weight = artwork['Weight']
+
+            if artwork['Weight'] == '':
+                weight = 0
+            else: 
+                weight = float(artwork['Weight'])
+
+            cost_weight=round(((weight)*72),2)
+            cost_a = round(((cost_Area(artwork))/10000),2) 
+            cost_vol = round(((cost_volume(artwork))/1000000),2)
+
+            if cost_weight == 0 and cost_a == 0 and cost_vol == 0:
+                costo_total  += 48.00
+                cost = {'Artwork':artwork_filtrada, 
+                        'Cost':48.00}
+
+                lt.addLast(transp_cost,cost)
+
+            elif cost_weight > cost_vol and cost_weight > cost_a:
+                
+                    costo_total  += cost_weight
+                    peso_total += weight
+                    cost = {'Artwork':artwork_filtrada, 
+                            'Cost':cost_weight}
+
+                    lt.addLast(transp_cost,cost)
+
+            elif cost_a > cost_weight and cost_a > cost_vol:
+                
+                    costo_total += cost_a
+                    peso_total += weight
+                    cost = {'Artwork':artwork_filtrada, 
+                            'Cost':cost_a}
+
+                    lt.addLast(transp_cost,cost)
+
+            elif cost_vol > cost_a and cost_vol > cost_weight:
+
+                    costo_total  += cost_vol
+                    peso_total += weight
+                    cost = {'Artwork':artwork_filtrada, 
+                            'Cost':cost_vol}
+
+                    lt.addLast(transp_cost,cost)
+            
+        copy= transp_cost.copy()
+        #sortTranspOld(copy)
+        #sortTransportation(transp_cost)
+    pass
+
+def cost_Area(artwork):
+    pi = math.pi
+    length = artwork['Length']
+    height = artwork['Height']
+    width = artwork['Width']
+    diameter =artwork['Diameter']
+
+    #area de la forma largo por altura
+    if artwork['Length'] == '':
+        length = 0
+    else: 
+        length = float(length)
+    if artwork['Height'] == '':
+        height = 0
+    else: 
+        height = float(height)   
+    
+    if artwork['Diameter'] == '':
+        diameter = 0
+    else: 
+        diameter = float(diameter)
+
+    if artwork['Width'] == '':
+        width = 0
+    else: 
+        width = float(width)
+
+
+    cost_area1 = (length*height)*72
+    cost_area5 = (width*height)*72
+    #area de circulo    
+    cost_area2 = (pi*((diameter)/2)**2)*72
+    #area cilindro
+    cost_area3 = (2*(pi*(diameter)/2)*height) + 2*((math.pi*((diameter)/2)**2))*72
+    #area esfera
+    cost_area4 = (4*(pi*(diameter)/2)**2)*72
+
+    if cost_area1 > cost_area2 and cost_area1 >cost_area3 and cost_area1 > cost_area4 and cost_area1 > cost_area5:
+        return cost_area1
+    elif cost_area2 > cost_area1 and cost_area2 > cost_area3 and cost_area2 > cost_area4 and cost_area2 > cost_area5: 
+        return cost_area2
+    elif cost_area3 > cost_area1 and cost_area3 > cost_area2 and cost_area3 > cost_area4 and cost_area3 > cost_area5 :
+        return cost_area3
+    elif cost_area4 > cost_area1 and cost_area4 > cost_area2 and cost_area4 > cost_area3 and cost_area4 > cost_area5 :
+        return cost_area4
+    else: 
+        return cost_area5
+
+
+def cost_volume(artwork):
+
+    pi = math.pi
+
+    length = artwork['Length']
+    height = artwork['Height']
+    diameter = artwork['Diameter']
+    width = artwork['Width']
+    depth = artwork['Depth']
+
+    if artwork['Width'] == '':
+        width = 0
+    else: 
+        width = float(width)
+    if artwork['Length'] == '':
+        length = 0
+    else: 
+        length = float(length)
+    if artwork['Height'] == '':
+        height = 0
+    else: 
+        height = float(height)
+    if artwork['Diameter'] == '':
+        diameter = 0
+    else: 
+        diameter = float(diameter)
+    if artwork['Depth'] == '':
+        depth = 0
+    else: 
+        depth = float(depth)
+
+    #volumen de la forma longitud por altura por ancho
+
+    cost_vol1 = (length*height*width)*72
+    cost_vol2 = (length*height*depth)*72
+
+    #volumen esfera
+    cost_vol3 = ((4/3)*((pi*(diameter)/2)**3))*72
+    #volumen cilindro
+    cost_vol4 = ((pi*((diameter)/2)**2)*height)*72
+
+    if cost_vol1 > cost_vol2 and cost_vol1 > cost_vol3 and cost_vol1 > cost_vol4:
+        return cost_vol1
+    elif cost_vol2 > cost_vol1 and cost_vol2 > cost_vol3 and cost_vol2 > cost_vol4:
+        return cost_vol2
+    elif cost_vol3 > cost_vol1 and cost_vol3 > cost_vol2 and cost_vol3 > cost_vol4:
+        return cost_vol3
+    
+    else: 
+        return cost_vol4
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
@@ -260,7 +507,7 @@ def compareArtistsByName(Key_artID, artist_ID):
     else:
         return -1
 
-def compareMediums (medium, entry):
+def compareMapMediums (medium, entry):
     mediumentry = me.getKey(entry)
     if (medium == mediumentry):
         return 0
@@ -271,6 +518,15 @@ def compareMediums (medium, entry):
 
 def cmpArtworkYear(artwork1,artwork2):
     return int(artwork1['Date']) < int(artwork2['Date'])
+
+def compareMapDptos(dpto,entry):
+    dptoentry = me.getKey(entry)
+    if (dpto == dptoentry):
+        return 0
+    elif (dpto > dptoentry):
+        return 1
+    else:
+        return -1
 
 
 # Funciones de ordenamiento

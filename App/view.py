@@ -39,8 +39,8 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("0- Cargar información en el catálogo")
-    print("1- Obras más antiguas por técinca")
-    #print("1- Listar cronológicamente los artistas")
+    #print("1- Obras más antiguas por técinca")
+    print("1- Listar cronológicamente los artistas")
     print("2- Listar cronológicamente las adquisiciones")
     print("3- Clasificar las obras de una artista por técnica")
     print("4- Clasificar las obras por nacionalidad de sus creadores")
@@ -63,7 +63,27 @@ def loadData(catalog):
     """
     controller.loadData(catalog)
 
-def printArtistYear():
+def printArtistDate(artist,año_inicial, año_final):
+    tamano = lt.size(artist)
+    
+    if tamano > 0 :
+        first_3_artists = lt.subList(artist, 1, 3 )
+        last_3_artists = lt.subList(artist, tamano - 2, 3)
+
+        
+        print ('Se encontraron ' + str(tamano) + ' artistas nacidos en el rango de ' + str(año_inicial) + ' hasta ' + str(año_final)+ "\n")
+
+        print('Los primeros 3 artistas encontrados en el rango son: ')
+        for artist in lt.iterator(first_3_artists):
+            print("Nombre: " + artist["DisplayName"] + ", Año de nacimiento: " + artist["BeginDate"] + ", Año de muerte: " + artist["EndDate"] + ", Nacionalidad: "+ artist["Nationality"] + ", Género: " + artist["Gender"])
+            
+
+        print('\nLos últimos 3 artistas encontrados en el rango son: ')
+        for artist in lt.iterator(last_3_artists):
+            print("Nombre: " + artist["DisplayName"] + ", Año de nacimiento: " + artist["BeginDate"] + ", Año de muerte: " + artist["EndDate"] + ", Nacionalidad: "+ artist["Nationality"] + ", Género: " + artist["Gender"])
+        
+    else:
+        print('No se encontraron artistas nacidos en este rango de años')
     pass
 
 def printArtworkDate():
@@ -111,6 +131,10 @@ while True:
 
     elif int(inputs[0]) == 1:
 
+
+        """
+        Parte del lab
+
         medio = (input('Medio de las obras que se pretende buscar: ')).lower()
         numero = int(input('Número de obras más antiguas a buscar: '))
         respuesta = controller.getMedium(catalog, medio)
@@ -121,13 +145,15 @@ while True:
             print(artwork)
         
         """
-        
+        """
         Requerimiento 1: artistas por fecha de nacimiento
+        """
 
         año_inicial = int(input('Año inicial para el rango de busqueda: '))
         año_final = int(input ('Año final para el rango de busqueda: '))
         artist = controller.getArtistYear(catalog, año_inicial, año_final)
-        """
+        printArtistDate(artist,año_inicial, año_final)
+        
         
     elif int(inputs[0]) == 2:
 
