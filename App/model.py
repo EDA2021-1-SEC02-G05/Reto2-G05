@@ -231,14 +231,6 @@ def addMedium(catalog, medium_name, artwork):
 
 def addDpto(catalog,dpto ,artwork):
 
-    artwork_filtrada = {'Title':artwork['Title'], 
-                    'Artists':artwork['ConstituentID'],
-                    'Classification': artwork['Classification'],
-                    'Department':artwork['Department'],
-                    'Date': artwork[ 'Date'],
-                    'Medium':artwork['Medium'],
-                    'Dimensions': artwork['Dimensions']}
-
     department = catalog['ArtworkDpto']
     existdepartment = mp.contains(department, dpto)
     if existdepartment:
@@ -247,7 +239,7 @@ def addDpto(catalog,dpto ,artwork):
     else:
         dpto_value = newDpto()
         mp.put(department, dpto, dpto_value)
-    lt.addLast(dpto_value['Artworks'], artwork_filtrada)
+    lt.addLast(dpto_value['Artworks'], artwork)
 
 def newDpto():
     """
@@ -295,6 +287,7 @@ def getMedium(catalog, Medium):
     return None
 
 def getTranspCost(catalog, dpto):
+    start_time = time.process_time()
     costo_total = 0
     peso_total = 0
     transp_cost = lt.newList('ARRAY_LIST')
@@ -304,9 +297,10 @@ def getTranspCost(catalog, dpto):
 
         artworksBydpto = me.getValue(artwork_dpto_entry)
 
-        for artwork in lt.iterator(artworksBydpto):
+        for artwork in lt.iterator(artworksBydpto['Artworks']):
+
             artwork_filtrada = {'Title': artwork['Title'],
-                                'Artist/s':artwork['Artists'],
+                                'Artist/s':artwork['ConstituentID'],
                                 'Classification': artwork['Classification'],
                                 'Date':artwork['Date'],
                                 'Medium':artwork['Medium'],
@@ -357,11 +351,12 @@ def getTranspCost(catalog, dpto):
                     lt.addLast(transp_cost,cost)
             
         copy= transp_cost.copy()
-        #sortTranspOld(copy)
-        #sortTransportation(transp_cost)
+        sortTranspOld(copy)
+        sortTransportation(transp_cost)
+        stop_time = time.process_time()
+        elapsed_time_mseg = (stop_time - start_time)*1000
 
-        return 
-    pass
+        return transp_cost,round(costo_total,2), copy, peso_total, elapsed_time_mseg
 
 def cost_Area(artwork):
     pi = math.pi
@@ -534,11 +529,29 @@ def compareMapDptos(dpto,entry):
     else:
         return -1
 
+def cmpTranspOld (artwork1,artwork2):
+
+    if artwork1['Artwork']['Date'] != '' and artwork2['Artwork']['Date'] != '':
+        return int(artwork1['Artwork']['Date']) <  int(artwork2['Artwork']['Date'])
+
+def cmpTranspCost(cost1,cost2):
+
+    return int(cost1['Cost']) > int(cost2['Cost'])
+
 
 # Funciones de ordenamiento
 
 def sortYear(lista_obras):
 
     ms.sort(lista_obras, cmpArtworkYear)
+
+def sortTranspOld(list_old):
+
+    ms.sort(list_old, cmpTranspOld)
+
+def sortTransportation(transp_cost):
+
+    ms.sort(transp_cost, cmpTranspCost)
+
 
 

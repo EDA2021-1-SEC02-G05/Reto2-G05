@@ -92,7 +92,7 @@ def printArtistTec():
     pass
 def printArtworkNationality():
     pass
-def printTransportationCost(transportation,tiempo, costo_total, old, dpto, peso_total):
+def printTransportationCost(transportation, costo_total, old, peso_total, dpto, tiempo):
     tamano = lt.size(transportation)
     if tamano > 0 :
 
@@ -103,13 +103,15 @@ def printTransportationCost(transportation,tiempo, costo_total, old, dpto, peso_
         top5_viejas = lt.subList(old, 1, 5 )
         print('\n Las 5 obras más antiguas a transportar son: \n')
         for artwork in lt.iterator(top5_viejas):
-            print("Titulo: " + artwork['Artwork']["Title"] + ", Artistas: "+  str(artwork['Artwork']["Artist/s"]["elements"]) + ", Clasificación : " + artwork['Artwork']["Classification"] + ", Fecha: "+ artwork['Artwork']["Date"] + ", Medio: "+ artwork['Artwork']["Medium"] + ", Dimensiones: " + artwork['Artwork']["Dimensions"] + ", Costo de Transporte: " + str(artwork["Cost"]) + '\n')
+            print(artwork)
+            #print("Titulo: " + artwork['Artwork']["Title"] + ", Artistas: "+  str(artwork['Artwork']["Artist/s"]["elements"]) + ", Clasificación : " + artwork['Artwork']["Classification"] + ", Fecha: "+ artwork['Artwork']["Date"] + ", Medio: "+ artwork['Artwork']["Medium"] + ", Dimensiones: " + artwork['Artwork']["Dimensions"] + ", Costo de Transporte: " + str(artwork["Cost"]) + '\n')
         
         top5_costosas = lt.subList(transportation, 1 , 5)
         print('\n Las 5 obras más costosas de transportar son: \n')
 
         for artwork in lt.iterator(top5_costosas):
-            print("Titulo: " + artwork['Artwork']["Title"] + ", Artistas: " + str(artwork['Artwork']["Artist/s"]["elements"])  + ", Clasificación : " + artwork['Artwork']["Classification"] + ", Fecha: "+ artwork['Artwork']["Date"] + ", Medio: "+ artwork['Artwork']["Medium"] + ", Dimensiones: " + artwork['Artwork']["Dimensions"] + ", Costo de Transporte: " + str(artwork["Cost"])+ '\n')
+            print(artwork)
+            #print("Titulo: " + artwork['Artwork']["Title"] + ", Artistas: " + str(artwork['Artwork']["Artist/s"]["elements"])  + ", Clasificación : " + artwork['Artwork']["Classification"] + ", Fecha: "+ artwork['Artwork']["Date"] + ", Medio: "+ artwork['Artwork']["Medium"] + ", Dimensiones: " + artwork['Artwork']["Dimensions"] + ", Costo de Transporte: " + str(artwork["Cost"])+ '\n')
         print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
     else: 
         print('No se encontraron obras para transportar de ese departamento')
@@ -126,8 +128,6 @@ while True:
 
         catalog = initCatalog()
         loadData(catalog)
-
-        print(catalog['ArtworkDpto'])
 
         tamano_artwork = lt.size(catalog['Artworks'])
         tamano_artist = lt.size(catalog['Artists'])
@@ -202,8 +202,8 @@ while True:
 
         'Requerimiento 5: transportar obras de un departamento '
 
-        dpto = input('Ingrese el departamento del que quiere calcular el costo de transporte de sus obras: ')
-        transport = controller.getTransportationCost(catalog, dpto)
+        dpto = (input('Ingrese el departamento del que quiere calcular el costo de transporte de sus obras: ')).lower()
+        transport = controller.getTranspCost(catalog, dpto)
         printTransportationCost(transport[0], transport[1] ,transport[2], transport[3],dpto, transport[4])
 
     elif int(inputs[0]) == 6:
