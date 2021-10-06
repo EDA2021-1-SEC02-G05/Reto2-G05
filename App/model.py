@@ -179,8 +179,8 @@ def addArtwork(catalog,artwork):
     artist_id = artwork['ConstituentID'].split(',')
     
     for id in artist_id:
-        #addArtworkArtist(catalog, id, artwork) 
-        addArtistTecnique(catalog,id,artwork)
+        addArtworkArtist(catalog, id, artwork) 
+        #addArtistTecnique(catalog,id,artwork)
 
 def addArtistTecnique(catalog,id,artwork):
 
@@ -264,7 +264,7 @@ def newNationality():
     return nationality
     
 
-#def addArtworkArtist(catalog, id, artwork):
+def addArtworkArtist(catalog, id, artwork):
     artists = catalog['Artists']
 
     posartist = lt.isPresent(artists, id)
@@ -552,7 +552,7 @@ def cost_volume(artwork):
     else: 
         return cost_vol4
 
-        
+
 def getNationality(catalog, Nationality):
     """
     Retorna las obras de arte de un medio específico
