@@ -105,4 +105,3 @@ def getTranspCost(catalog, dpto):
     Retorna las obras de un departamento dado y el costo asociado a su transporte
     """
     return model.getTranspCost(catalog, dpto)
-

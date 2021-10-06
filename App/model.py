@@ -165,17 +165,22 @@ def addArtwork(catalog,artwork):
     artist_id = artwork['ConstituentID'].split(',')
     
     for id in artist_id:
-        addArtworkArtist(catalog, id, artwork) 
-        #addArtistTecnique(catalog,id,artwork)
+        #addArtworkArtist(catalog, id, artwork) 
+        addArtistTecnique(catalog,id,artwork)
 
 def addArtistTecnique(catalog,id,artwork):
+    """
+    Función que primero busca en la lista de artistas el artista que le corresponde al ID que está entrando como parámetro y luego con el displayname de ese artista
+    crea un map cuya llave es el nombre del artista y el valor asociado es un map clasificando sus obras de arte por técnicas.
+    """
+    artists = catalog['Artists']
 
-    artists_list = catalog['Artists']
-
-    posartist = lt.isPresent(artists_list, id)
+    posartist = lt.isPresent(artists, id)
 
     if posartist > 0:
-        artist = lt.getElement(artists_list, posartist)
+        artist = lt.getElement(artists, posartist)
+        lt.addLast(artist['Artworks'], artwork)
+        lt.addLast(artwork['Artists'], artist['DisplayName'])
 
     artists_map = catalog['ArtistMedium']
     existartist = mp.contains(artists_map, artist['DisplayName'])
@@ -185,9 +190,9 @@ def addArtistTecnique(catalog,id,artwork):
         artist_value = me.getValue(entry)
         addMedium(artist_value, artwork['Medium'], artwork)
     else:
-        medium = newMedium()
-        addMedium(medium, artwork['Medium'], artwork)
-        mp.put(artists_map, artist['DisplayName'], medium)
+        artist_value = newArtist()
+        addMedium(artist_value, artwork['Medium'], artwork)
+        mp.put(artists_map, artist['DisplayName'], artist_value)
 
 
 def newArtist():
@@ -196,14 +201,14 @@ def newArtist():
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    medium = {
-              "Artworks": None}
+    artist_tec = {
+                    "Artworks": None}
 
-    medium['Artworks'] = mp.newMap(2000,
+    artist_tec['Artworks'] = mp.newMap(200,
                                    maptype='PROBING',
                                    loadfactor=0.5,
                                    comparefunction=compareMapMediums)
-    return medium
+    return artist_tec
 
 def newMedium():
     """
@@ -223,9 +228,9 @@ def addMedium(medium, medium_name, artwork):
     """
     artwork_filtrada = {'ObjectID':artwork['ObjectID'], 
                     'Title':artwork['Title'], 
-                    'ConstituentID':artwork['ConstituentID'],
                     'Date': artwork[ 'Date'],
-                    'Medium':artwork['Medium'] }
+                    'Medium':artwork['Medium'],
+                    'Dimensions':artwork['Dimensions'] }
 
     mediums = medium['Artworks']
     existmedium = mp.contains(mediums, medium_name)
@@ -236,7 +241,7 @@ def addMedium(medium, medium_name, artwork):
         medium_value = newMedium()
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
-
+"""
 def addArtworkArtist(catalog, id, artwork):
     artists = catalog['Artists']
 
@@ -246,7 +251,7 @@ def addArtworkArtist(catalog, id, artwork):
         artist = lt.getElement(artists, posartist)
         lt.addLast(artist['Artworks'], artwork)
         lt.addLast(artwork['Artists'], artist['DisplayName'])
-
+"""
 
 def addArtistDate(catalog,begindate ,artist):
     begindate_int = int(begindate)
@@ -287,7 +292,7 @@ def newNationality():
     nationality = {
               "Artworks": None}
 
-    nationality['Artworks'] = lt.newList('ARRAY_LIST', compareNationality)
+    nationality['Artworks'] = lt.newList('ARRAY_LIST')
     return nationality
 
 def addNationality(catalog, nation_name, artist):
@@ -439,9 +444,9 @@ def getTranspCost(catalog, dpto):
 
                     lt.addLast(transp_cost,cost)
             
-        copy= transp_cost.copy()
-        sortTranspOld(copy)
+        copy= lt.subList(transp_cost,1,lt.size(transp_cost))
         sortTransportation(transp_cost)
+        sortTranspOld(copy)
         stop_time = time.process_time()
         elapsed_time_mseg = (stop_time - start_time)*1000
 
@@ -609,15 +614,6 @@ def compareMapMediums (medium, entry):
 def cmpArtworkYear(artwork1,artwork2):
     return int(artwork1['Date']) < int(artwork2['Date'])
 
-def compareNationality (nationality, entry):
-    nationentry = me.getKey(entry)
-    if (nationality == nationentry):
-        return 0
-    elif (nationality > nationentry):
-        return 1
-    else:
-        return -1
-
 def compareMapDptos(dpto,entry):
     dptoentry = me.getKey(entry)
     if (dpto == dptoentry):
@@ -627,10 +623,10 @@ def compareMapDptos(dpto,entry):
     else:
         return -1
 
-
 def cmpTranspOld (artwork1,artwork2):
 
     if artwork1['Artwork']['Date'] != '' and artwork2['Artwork']['Date'] != '':
+
         return int(artwork1['Artwork']['Date']) <  int(artwork2['Artwork']['Date'])
 
 def cmpTranspCost(cost1,cost2):
@@ -647,7 +643,4 @@ def sortTranspOld(list_old):
 def sortTransportation(transp_cost):
 
     ms.sort(transp_cost, cmpTranspCost)
-
-
-
 
