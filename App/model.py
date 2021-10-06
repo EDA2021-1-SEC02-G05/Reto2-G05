@@ -35,6 +35,7 @@ import datetime as d
 import time
 import math
 
+
 """
 Se define la estructura de un catálogo de obras y artistas. 
 """
@@ -105,22 +106,7 @@ def newCatalog():
                                 maptype='PROBING',
                                 loadfactor=0.5,
                                 comparefunction=compareArtistsByName)
-
     """
-    Este indice crea un map cuya llave es la etiqueta
-    """
-    catalog['Nationality'] = mp.newMap(100,
-                                maptype='PROBING',
-                                loadfactor=0.5,
-                                comparefunction=compareNationality)
-    """
-    Este indice crea un map cuya llave es el Id de la etiqueta
-    
-    catalog['tagIds'] = mp.newMap(34500,
-                                  maptype='CHAINING',
-                                  loadfactor=4.0,
-                                  comparefunction=compareTagIds)
-    
     Este indice crea un map cuya llave es el departamento y el valor son sus obras de arte
     """
     catalog['ArtworkDpto'] = mp.newMap(300,
@@ -250,19 +236,6 @@ def addMedium(medium, medium_name, artwork):
         medium_value = newMedium()
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
-    
-def newNationality():
-    """
-    Crea una nueva estructura para modelar los libros de un autor
-    y su promedio de ratings. Se crea una lista para guardar los
-    libros de dicho autor.
-    """
-    nationality = {
-              "Artworks": None}
-
-    nationality['Artworks'] = lt.newList('ARRAY_LIST', compareNationality)
-    return nationality
-    
 
 def addArtworkArtist(catalog, id, artwork):
     artists = catalog['Artists']
@@ -305,6 +278,35 @@ def newDate(date):
     
     return date
 
+def newNationality():
+    """
+    Crea una nueva estructura para modelar los libros de un autor
+    y su promedio de ratings. Se crea una lista para guardar los
+    libros de dicho autor.
+    """
+    nationality = {
+              "Artworks": None}
+
+    nationality['Artworks'] = lt.newList('ARRAY_LIST', compareNationality)
+    return nationality
+
+def addNationality(catalog, nation_name, artist):
+    """
+    Esta función adiciona una obra de arte a un maps que los clasifica por medio.
+    """
+    artwork_filtrada = {'DisplayName':artist['DisplayName'], 
+                    'Nationality':artist['Nationality'], 
+                    'Artworks':artist['Artworks'],}
+
+    nations = catalog['Nationality']
+    existmedium = mp.contains(nations, nation_name)
+    if existmedium:
+        entry = mp.get(nations, nation_name)
+        nation_value = me.getValue(entry)
+    else:
+        nation_value = newMedium()
+        mp.put(nations, nation_name, nation_value)
+    lt.addLast(nation_value['Artworks'], artwork_filtrada)
 
 def addDpto(catalog,dpto ,artwork):
 
@@ -330,23 +332,6 @@ def newDpto():
     dpto['Artworks'] = lt.newList('ARRAY_LIST')
     return dpto
 
-def addNationality(catalog, nation_name, artist):
-    """
-    Esta función adiciona una obra de arte a un maps que los clasifica por medio.
-    """
-    artwork_filtrada = {'DisplayName':artist['DisplayName'], 
-                    'Nationality':artist['Nationality'], 
-                    'Artworks':artist['Artworks'],}
-
-    nations = catalog['Nationality']
-    existmedium = mp.contains(nations, nation_name)
-    if existmedium:
-        entry = mp.get(nations, nation_name)
-        nation_value = me.getValue(entry)
-    else:
-        nation_value = newMedium()
-        mp.put(nations, nation_name, nation_value)
-    lt.addLast(nation_value['Artworks'], artwork_filtrada)
 
 
 
@@ -376,7 +361,17 @@ def getMedium(catalog, Medium):
     medium_pareja = mp.get(catalog['Medium'], Medium)
     if medium_pareja:
         lista_obras = me.getValue(medium_pareja)
-        sortYear(lista_obras['Artworks'])
+        return lista_obras['Artworks']
+    return None
+
+def getNationality(catalog, Nationality):
+    """
+    Retorna las obras de arte de un medio específico
+    """
+    nation_pareja = mp.get(catalog['Nationality'], Nationality)
+    if nation_pareja:
+        lista_obras = me.getValue(nation_pareja)
+
         return lista_obras['Artworks']
     return None
 
@@ -552,18 +547,6 @@ def cost_volume(artwork):
     else: 
         return cost_vol4
 
-
-def getNationality(catalog, Nationality):
-    """
-    Retorna las obras de arte de un medio específico
-    """
-    nation_pareja = mp.get(catalog['Nationality'], Nationality)
-    if nation_pareja:
-        lista_obras = me.getValue(nation_pareja)
-        sortYear(lista_obras['Artworks'])
-        return lista_obras['Artworks']
-    return None
-
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def compareArtistID(id1,id2):
@@ -623,6 +606,9 @@ def compareMapMediums (medium, entry):
     else:
         return -1
 
+def cmpArtworkYear(artwork1,artwork2):
+    return int(artwork1['Date']) < int(artwork2['Date'])
+
 def compareNationality (nationality, entry):
     nationentry = me.getKey(entry)
     if (nationality == nationentry):
@@ -632,9 +618,6 @@ def compareNationality (nationality, entry):
     else:
         return -1
 
-def cmpArtworkYear(artwork1,artwork2):
-    return int(artwork1['Date']) < int(artwork2['Date'])
-
 def compareMapDptos(dpto,entry):
     dptoentry = me.getKey(entry)
     if (dpto == dptoentry):
@@ -643,6 +626,7 @@ def compareMapDptos(dpto,entry):
         return 1
     else:
         return -1
+
 
 def cmpTranspOld (artwork1,artwork2):
 
@@ -656,10 +640,6 @@ def cmpTranspCost(cost1,cost2):
 
 # Funciones de ordenamiento
 
-def sortYear(lista_obras):
-
-    ms.sort(lista_obras, cmpArtworkYear)
-
 def sortTranspOld(list_old):
 
     ms.sort(list_old, cmpTranspOld)
@@ -667,6 +647,7 @@ def sortTranspOld(list_old):
 def sortTransportation(transp_cost):
 
     ms.sort(transp_cost, cmpTranspCost)
+
 
 
 
