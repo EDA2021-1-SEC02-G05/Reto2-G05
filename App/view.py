@@ -222,7 +222,7 @@ while True:
 
         "Requerimiento 4: clasifica las obras por la nacionalidad de sus creadores"
   
-        nationalities = controller.getArtistNationality(catalog)
+        nationalities = controller.getNationality(catalog)
 
     elif int(inputs[0]) == 5:
 

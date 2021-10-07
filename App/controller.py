@@ -53,7 +53,7 @@ def loadArtists(catalog):
     Carga los artistas del archivo.  Por cada artista se indica al
     modelo que debe adicionarlo al catalogo.
     """
-    booksfile = cf.data_dir + 'Artists-utf8-small.csv'
+    booksfile = cf.data_dir + 'Artists-utf8-5pct.csv'
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for artist in input_file:
         model.addArtist(catalog, artist)
@@ -63,7 +63,7 @@ def loadArtworks(catalog):
     Carga todas las obras de arte del archivo e indica al modelo
     que los adicione al catalogo
     """
-    tagsfile = cf.data_dir + 'Artworks-utf8-small.csv'
+    tagsfile = cf.data_dir + 'Artworks-utf8-5pct.csv'
     input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
     for artwork in input_file:
         model.addArtwork(catalog, artwork)
@@ -73,8 +73,6 @@ def loadArtworks(catalog):
 
 # Funciones de consulta sobre el catálogo
 
-def getMedium(catalog, medium):
-    return model.getMedium(catalog, medium)
 
 def getArtistYear(catalog,añoi,añof):
     """
@@ -94,14 +92,12 @@ def getArtistTecnique(catalog, name):
     """
     return model.getArtistTecnique(catalog, name)
 
-def getArtistNationality(catalog):
+def getNationality(catalog):
     """
     Retorna las obras de arte de un artista segun su técnica
     """
     return model.getNationality(catalog)
 
 def getTranspCost(catalog, dpto):
-    """
-    Retorna las obras de un departamento dado y el costo asociado a su transporte
-    """
+
     return model.getTranspCost(catalog, dpto)
