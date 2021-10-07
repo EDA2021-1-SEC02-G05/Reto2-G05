@@ -89,6 +89,7 @@ def printArtistDate(artist,año_inicial, año_final):
 
 def printArtworkDate():
     pass
+
 def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
 
     if total_obras > 0:
