@@ -58,9 +58,11 @@ def newCatalog():
     """
     catalog = {'Artists': None,
                'Artworks': None,
-               'ArtistBeginDate': None,
+               'ArtistDates': None,
                'ArtworkDates': None,
-               'Nationality': None}
+               'ArtistTecnique':None,
+               'Nationality': None,
+               'ArtworkDpto':None}
 
 
     """
@@ -82,6 +84,14 @@ def newCatalog():
     Este indice crea un map cuya llave es el año de nacimiento del artista
     """
     catalog['ArtistDates'] = mp.newMap(100,
+                                   maptype='PROBING',
+                                   loadfactor= 0.5,
+                                   comparefunction=compareMapArtistDate)
+
+    """
+    Este indice crea un map cuya llave es el año de nacimiento del artista
+    """
+    catalog['ArtworkDates'] = mp.newMap(100,
                                    maptype='PROBING',
                                    loadfactor= 0.5,
                                    comparefunction=compareMapArtistDate)
@@ -146,13 +156,10 @@ def addArtwork(catalog,artwork):
     department = artwork['Department']
     addDpto(catalog, department, artwork)
 
-    medium = artwork['Medium']
-    #addMedium(catalog, medium, artwork)
-
     artist_id = artwork['ConstituentID'].split(',')
     
     for id in artist_id:
-        #addArtworkArtist(catalog, id, artwork) 
+
         addArtistTecnique(catalog,id,artwork)
 
 def addArtistTecnique(catalog,id,artwork):
@@ -188,8 +195,7 @@ def newArtist():
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    artist_tec = {
-                    "Artworks": None}
+    artist_tec = { "Artworks": None}
 
     artist_tec['Artworks'] = mp.newMap(200,
                                    maptype='PROBING',
@@ -229,17 +235,6 @@ def addMedium(medium, medium_name, artwork):
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
 
-"""
-def addArtworkArtist(catalog, id, artwork):
-    artists = catalog['Artists']
-
-    posartist = lt.isPresent(artists, id)
-
-    if posartist > 0:
-        artist = lt.getElement(artists, posartist)
-        lt.addLast(artist['Artworks'], artwork)
-        lt.addLast(artwork['Artists'], artist['DisplayName'])
-"""
 
 def addArtistDate(catalog,begindate ,artist):
     begindate_int = int(begindate)
