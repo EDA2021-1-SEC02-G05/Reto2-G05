@@ -106,6 +106,14 @@ def newCatalog():
                                 maptype='PROBING',
                                 loadfactor=0.5,
                                 comparefunction=compareArtistsByName)
+
+    """
+    Este indice crea un map cuya llave es la etiqueta
+    """
+    catalog['Nationality'] = mp.newMap(100,
+                                maptype='PROBING',
+                                loadfactor=0.5,
+                                comparefunction=compareNationality)
     """
     Este indice crea un map cuya llave es el departamento y el valor son sus obras de arte
     """
@@ -607,6 +615,15 @@ def compareMapMediums (medium, entry):
     if (medium == mediumentry):
         return 0
     elif (medium > mediumentry):
+        return 1
+    else:
+        return -1
+
+def compareNationality (nationality, entry):
+    nationentry = me.getKey(entry)
+    if (nationality == nationentry):
+        return 0
+    elif (nationality > nationentry):
         return 1
     else:
         return -1
