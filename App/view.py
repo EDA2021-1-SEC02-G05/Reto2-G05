@@ -89,7 +89,23 @@ def printArtistDate(artist,año_inicial, año_final):
 
 def printArtworkDate():
     pass
-def printArtistTec():
+def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
+
+    if total_obras > 0:
+    
+        print('Se encontraron ' + str(total_obras) + ' obras del artista ' + name)
+        print('El total de medios/tecnicas utilizados por el artista son: '+str(tamano_tecs))
+        
+        print('La técnica más utilizada es: '+str(tecniques_mayor['Tecnique'])+'\n y las obras que la utilizan son: \n')
+
+        for artwork in lt.iterator(tecniques_mayor['Artworks']):
+                print("Titulo: " + artwork["Title"] + ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
+
+        #print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo)) 
+    else:
+        print('No se encontraron obras de arte de la técnica requerida.')
+
+
     pass
 def printArtworkNationality():
     pass
@@ -190,8 +206,9 @@ while True:
 
         "Requerimiento 3: clasifica obras de un artista por técnica"
         
-        name = input('Nombre del artista sobre el cual quiere realizar la consulta: ')
+        name = (input('Nombre del artista sobre el cual quiere realizar la consulta: ')).lower()
         tecniques = controller.getArtistTecnique(catalog, name)
+        printArtistTecnique(tecniques[0],tecniques[1], name, tecniques[2])
 
     elif int(inputs[0]) == 4:
 
