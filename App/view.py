@@ -85,7 +85,6 @@ def printArtistDate(artist,año_inicial, año_final):
         
     else:
         print('No se encontraron artistas nacidos en este rango de años')
-    pass
 
 def printArtworkDate():
     pass
@@ -97,24 +96,28 @@ def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
         print('Se encontraron ' + str(total_obras) + ' obras del artista ' + name)
         print('El total de medios/tecnicas utilizados por el artista son: '+str(tamano_tecs))
         
-        print('La técnica más utilizada es: '+str(tecniques_mayor['Tecnique'])+'\n y las 3 primeras y últimas obras que la utilizan son: \n')
-        
+        print('La técnica más utilizada es: '+str(tecniques_mayor['Tecnique'])+'\n y las obras que la utilizan son: \n')
         tamano_mayor = lt.size(tecniques_mayor['Artworks'])
-        prim3 = lt.subList(tecniques_mayor['Artworks'],1,3)
-        ult3 = lt.subList(tecniques_mayor['Artworks'],tamano_mayor-2,3)
+
+        if tamano_mayor > 6:
         
-        for artwork in lt.iterator(prim3):
-                print("Titulo: " + artwork["Title"] + ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
+            prim3 = lt.subList(tecniques_mayor['Artworks'],1,3)
+            ult3 = lt.subList(tecniques_mayor['Artworks'],tamano_mayor-2,3)
+            
+            for artwork in lt.iterator(prim3):
+                    print("Titulo: " + artwork["Title"] + ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
 
-        for artwork in lt.iterator(ult3):
-                print("Titulo: " + artwork["Title"] + ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
+            for artwork in lt.iterator(ult3):
+                    print("Titulo: " + artwork["Title"] + ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
 
-        #print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo)) 
+            #print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo)) 
+        else: 
+            for artwork in lt.iterator(tecniques_mayor['Artworks']):
+                    print("Titulo: " + artwork["Title"] + ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
+
     else:
         print('No se encontraron obras de arte de la técnica requerida.')
 
-
-    pass
 def printArtworkNationality():
     pass
 def printTransportationCost(transportation, costo_total, old, peso_total, dpto, tiempo):
@@ -178,20 +181,6 @@ while True:
 
     elif int(inputs[0]) == 1:
 
-
-        """
-        Parte del lab
-
-        medio = (input('Medio de las obras que se pretende buscar: ')).lower()
-        numero = int(input('Número de obras más antiguas a buscar: '))
-        respuesta = controller.getMedium(catalog, medio)
-        
-        primeras_n_obras = lt.subList(respuesta, 1, numero)
-        print('Las ' + str(numero)+ ' obras más antiguas para la medio ' + medio + ' son: ')
-        for artwork in lt.iterator(primeras_n_obras):
-            print(artwork)
-        
-        """
         """
         Requerimiento 1: artistas por fecha de nacimiento
         """
@@ -209,6 +198,7 @@ while True:
         fecha_inicial = (input('Fecha inicial para el rango de busqueda: '))
         fecha_final = (input('Fecha final para el rango de busqueda: '))
         artwork = controller.getArtworkYear(catalog, fecha_inicial, fecha_final)
+        printArtworkDate(artwork)
 
     elif int(inputs[0]) == 3:
 
