@@ -156,13 +156,12 @@ def addArtwork(catalog,artwork):
     department = artwork['Department']
     addDpto(catalog, department, artwork)
 
-    medium = artwork['Medium']
-    #addMedium(catalog, medium, artwork)
+    addArtworkDate(catalog, artwork['DateAcquired'], artwork)
 
     artist_id = artwork['ConstituentID'].split(',')
     
     for id in artist_id:
-        #addArtworkArtist(catalog, id, artwork) 
+
         addArtistTecnique(catalog,id,artwork)
 
 def addArtistTecnique(catalog,id,artwork):
@@ -239,17 +238,6 @@ def addMedium(medium, medium_name, artwork):
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
 
-"""
-def addArtworkArtist(catalog, id, artwork):
-    artists = catalog['Artists']
-
-    posartist = lt.isPresent(artists, id)
-
-    if posartist > 0:
-        artist = lt.getElement(artists, posartist)
-        lt.addLast(artist['Artworks'], artwork)
-        lt.addLast(artwork['Artists'], artist['DisplayName'])
-"""
 
 def addArtistDate(catalog,begindate ,artist):
     begindate_int = int(begindate)
@@ -280,6 +268,11 @@ def newDate(date):
     date['Artists'] = lt.newList('ARRAY_LIST')
     
     return date
+
+def addArtworkDate(catalog,fecha_ad, artwork):
+    fecha_sep = (fecha_ad).split('-')
+    
+    pass
 
 def newNationality():
     """
@@ -354,6 +347,10 @@ def getArtistYear(catalog, year_i, year_f):
         i += 1
     
     return artist_inrange
+
+def getArtworkYear(catalog, fecha_i, fecha_f):
+
+    pass
 
 def getArtistTecnique(catalog, artist_name):
     """
