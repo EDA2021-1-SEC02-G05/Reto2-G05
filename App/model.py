@@ -377,16 +377,18 @@ def getMedium(catalog, Medium):
         return lista_obras['Artworks']
     return None
 
-def getNationality(catalog, Nationality):
+def getNationality(catalog):
     """
     Retorna las obras de arte de un medio específico
     """
-    nation_pareja = mp.get(catalog['Nationality'], Nationality)
-    if nation_pareja:
-        lista_obras = me.getValue(nation_pareja)
+    for artist in lt.iterator(catalog['Artist']):
+        Nationality = artist['Nationality']
+        nation_pareja = mp.get(catalog['Nationality'], Nationality)
+        if nation_pareja:
+            lista_obras = me.getValue(nation_pareja)
 
-        return lista_obras['Artworks']
-    return None
+            return lista_obras['Artworks']
+        return None
 
 def getTranspCost(catalog, dpto):
     start_time = time.process_time()
