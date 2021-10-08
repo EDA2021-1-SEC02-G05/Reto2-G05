@@ -72,7 +72,7 @@ def newCatalog():
     para los mapas que se van a crearP
     """
     catalog['Artists'] = lt.newList('ARRAY_LIST', compareArtistID)
-    catalog['Artworks'] = lt.newList('ARRAY_LIST', compareObjectID)
+    catalog['Artworks'] = lt.newList('ARRAY_LIST', cmpfunction = compareObjectID)
 
     """
     A continuacion se crean indices por diferentes criterios
@@ -299,11 +299,11 @@ def newNationality():
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    nationality = {
+    nationality_work = {
               "Artworks": None}
 
-    nationality['Artworks'] = lt.newList('ARRAY_LIST')
-    return nationality
+    nationality_work['Artworks'] = lt.newList('ARRAY_LIST', cmpfunction = compareObjectID)
+    return nationality_work
 
 def addNationality(catalog, nation_name, artist):
     """
@@ -315,13 +315,19 @@ def addNationality(catalog, nation_name, artist):
 
     nations = catalog['Nationality']
     existmedium = mp.contains(nations, nation_name)
-    if existmedium:
-        entry = mp.get(nations, nation_name)
-        nation_value = me.getValue(entry)
-    else:
-        nation_value = newMedium()
-        mp.put(nations, nation_name, nation_value)
-    lt.addLast(nation_value['Artworks'], artwork_filtrada)
+    nation_value = artwork_filtrada['Artworks']
+
+    #si la nacionalidad no existe en el indice
+    if not existmedium:
+        entry = mp.put(nations, nation_name, nation_value)
+        
+    #cuando existe y se debe actualizar
+    elif existmedium:
+        temp_artwork = mp.get(nations, nation_name)
+        temp_artwork = me.getValue(temp_artwork)
+        for work in lt.iterator(nation_value):
+            lt.addLast(temp_artwork,work)
+        mp.put(nations, nation_name, temp_artwork)
 
 def addDpto(catalog,dpto ,artwork):
 
@@ -394,16 +400,23 @@ def getArtistTecnique(catalog, artist_name):
     return mayor_elem, tamano_tecs, total_obras
 
 
-def getNationality(catalog, Nationality):
+def getNationality(catalog):
     """
     Retorna las obras de arte de un medio específico
     """
-    nation_pareja = mp.get(catalog['Nationality'], Nationality)
+    answer = lt.newList("ARRAY_LIST",cmpfunction=compareNationality)
+    Nationality = catalog['Nationality']
+    nation_names = mp.keySet(Nationality)
+    for name in lt.iterator(nation_names):
+        nation_pareja = mp.get(Nationality, name)
+        nation_pareja = me.getValue(nation_pareja)
+        nation_size = lt.size(nation_pareja)
+    
     if nation_pareja:
         lista_obras = me.getValue(nation_pareja)
 
         return lista_obras['Artworks']
-    return None
+    return answer
 
 def getTranspCost(catalog, dpto):
     start_time = time.process_time()

@@ -87,6 +87,35 @@ def printArtistDate(artist,año_inicial, año_final):
 
 def printArtworkDate():
     pass
+def printArtistTec():
+    pass
+def printArtworkNationality(nationalities, tiempo):
+    print('Las 10 nacionalidades con mayor número de obras son: ')
+
+    top10 = lt.subList(nationalities,1, 10)
+    top = lt.subList(nationalities,1, 1)
+
+
+    for nacionalidad in lt.iterator(top10):
+        tamano = lt.size(nacionalidad['Artworks'])
+        print(nacionalidad['Nationality']+': '+ str(tamano))
+    
+    for nacionalidad in lt.iterator(top):
+        tamano = lt.size(nacionalidad['Artworks'])
+        print("La nacionalidad con más obras es: "+nacionalidad["Nationality"]+" con un total de "+str(tamano)+" obras.")
+        print("La información de las primeras y ultimas 3 obras de dicha nacionalidad se presenta a continuación:")
+        tresprimeras = lt.subList(nacionalidad['Artworks'], 1, 3)
+        tresultimas = lt.subList(nacionalidad['Artworks'],tamano-2, 3)
+        for artwork in lt.iterator(tresprimeras):
+            #print(artwork)
+            print("Titulo: " + artwork["Title"] + ", Artista/s : " + str(artwork["Artists"]["elements"])+ ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
+        
+        for artwork in lt.iterator(tresultimas):
+            #print(artwork)
+            print("Titulo: " + artwork["Title"] + ", Artista/s : " + str(artwork["Artists"]["elements"])+ ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
+    
+    print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
+
 
 def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
 
@@ -212,6 +241,7 @@ while True:
         "Requerimiento 4: clasifica las obras por la nacionalidad de sus creadores"
   
         nationalities = controller.getNationality(catalog)
+        printArtworkNationality(nationalities[0],nationalities[1])
 
     elif int(inputs[0]) == 5:
 
