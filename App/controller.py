@@ -101,3 +101,7 @@ def getNationality(catalog):
 def getTranspCost(catalog, dpto):
 
     return model.getTranspCost(catalog, dpto)
+
+def getProlificArtists(artists_inrange, num):
+
+    return model.getProlificArtists(artists_inrange, num)
