@@ -40,6 +40,7 @@ import math
 Se define la estructura de un catálogo de obras y artistas. 
 """
 
+
 # Construccion de modelos
 def newCatalog():
     """ Inicializa el catálogo de obras y artistas
@@ -58,9 +59,11 @@ def newCatalog():
     """
     catalog = {'Artists': None,
                'Artworks': None,
-               'ArtistBeginDate': None,
+               'ArtistDates': None,
                'ArtworkDates': None,
-               'Nationality': None}
+               'ArtistTecnique':None,
+               'Nationality': None,
+               'ArtworkDpto':None}
 
 
     """
@@ -69,7 +72,7 @@ def newCatalog():
     para los mapas que se van a crearP
     """
     catalog['Artists'] = lt.newList('ARRAY_LIST', compareArtistID)
-    catalog['Artworks'] = lt.newList('ARRAY_LIST', compareObjectID)
+    catalog['Artworks'] = lt.newList('ARRAY_LIST', cmpfunction = compareObjectID)
 
     """
     A continuacion se crean indices por diferentes criterios
@@ -77,13 +80,7 @@ def newCatalog():
     replican informacion, solo referencian las obras de arte y los artistas
     que se encuentran en las listas anteriormente creadas
     """
-    """
-    Este indice crea un map cuya llave es el  ID del artista
-    """
-    catalog['ArtistID'] = mp.newMap(10000,
-                                   maptype='CHAINING',
-                                   loadfactor=3.0,
-                                   comparefunction=None)
+
     """
     Este indice crea un map cuya llave es el año de nacimiento del artista
     """
@@ -93,22 +90,14 @@ def newCatalog():
                                    comparefunction=compareMapArtistDate)
 
     """
-    Este indice crea un map cuya llave es el autor del libro
-    """
-    catalog['ArtistArtwork'] = mp.newMap(2000,
-                                   maptype='PROBING',
-                                   loadfactor=0.5,
-                                   comparefunction=compareArtistsByName)
-    """
     Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
     """
-    catalog['ArtistMedium'] = mp.newMap(100,
+    catalog['ArtistTecnique'] = mp.newMap(100,
                                 maptype='PROBING',
                                 loadfactor=0.5,
                                 comparefunction=compareArtistsByName)
-
     """
-    Este indice crea un map cuya llave es la etiqueta
+    Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
     """
     catalog['Nationality'] = mp.newMap(100,
                                 maptype='PROBING',
@@ -167,13 +156,12 @@ def addArtwork(catalog,artwork):
     department = artwork['Department']
     addDpto(catalog, department, artwork)
 
-    medium = artwork['Medium']
-    #addMedium(catalog, medium, artwork)
+    addArtworkDate(catalog, artwork['DateAcquired'], artwork)
 
     artist_id = artwork['ConstituentID'].split(',')
     
     for id in artist_id:
-        #addArtworkArtist(catalog, id, artwork) 
+
         addArtistTecnique(catalog,id,artwork)
 
 def addArtistTecnique(catalog,id,artwork):
@@ -190,7 +178,7 @@ def addArtistTecnique(catalog,id,artwork):
         lt.addLast(artist['Artworks'], artwork)
         lt.addLast(artwork['Artists'], artist['DisplayName'])
 
-    artists_map = catalog['ArtistMedium']
+    artists_map = catalog['ArtistTecnique']
     existartist = mp.contains(artists_map, artist['DisplayName'])
 
     if existartist:
@@ -218,13 +206,13 @@ def newArtist():
                                    comparefunction=compareMapMediums)
     return artist_tec
 
-def newMedium():
+def newMedium(tec):
     """
     Crea una nueva estructura para modelar los libros de un autor
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    medium = {
+    medium = {'Tecnique': tec,
               "Artworks": None}
 
     medium['Artworks'] = lt.newList('ARRAY_LIST')
@@ -246,20 +234,10 @@ def addMedium(medium, medium_name, artwork):
         entry = mp.get(mediums, medium_name)
         medium_value = me.getValue(entry)
     else:
-        medium_value = newMedium()
+        medium_value = newMedium(medium_name)
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
-"""
-def addArtworkArtist(catalog, id, artwork):
-    artists = catalog['Artists']
 
-    posartist = lt.isPresent(artists, id)
-
-    if posartist > 0:
-        artist = lt.getElement(artists, posartist)
-        lt.addLast(artist['Artworks'], artwork)
-        lt.addLast(artwork['Artists'], artist['DisplayName'])
-"""
 
 def addArtistDate(catalog,begindate ,artist):
     begindate_int = int(begindate)
@@ -291,17 +269,22 @@ def newDate(date):
     
     return date
 
+def addArtworkDate(catalog,fecha_ad, artwork):
+    fecha_sep = (fecha_ad).split('-')
+    
+    pass
+
 def newNationality():
     """
     Crea una nueva estructura para modelar los libros de un autor
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    nationality = {
+    nationality_work = {
               "Artworks": None}
 
-    nationality['Artworks'] = lt.newList('ARRAY_LIST')
-    return nationality
+    nationality_work['Artworks'] = lt.newList('ARRAY_LIST', cmpfunction = compareObjectID)
+    return nationality_work
 
 def addNationality(catalog, nation_name, artist):
     """
@@ -313,13 +296,19 @@ def addNationality(catalog, nation_name, artist):
 
     nations = catalog['Nationality']
     existmedium = mp.contains(nations, nation_name)
-    if existmedium:
-        entry = mp.get(nations, nation_name)
-        nation_value = me.getValue(entry)
-    else:
-        nation_value = newMedium()
-        mp.put(nations, nation_name, nation_value)
-    lt.addLast(nation_value['Artworks'], artwork_filtrada)
+    nation_value = artwork_filtrada['Artworks']
+
+    #si la nacionalidad no existe en el indice
+    if not existmedium:
+        entry = mp.put(nations, nation_name, nation_value)
+        
+    #cuando existe y se debe actualizar
+    elif existmedium:
+        temp_artwork = mp.get(nations, nation_name)
+        temp_artwork = me.getValue(temp_artwork)
+        for work in lt.iterator(nation_value):
+            lt.addLast(temp_artwork,work)
+        mp.put(nations, nation_name, temp_artwork)
 
 def addDpto(catalog,dpto ,artwork):
 
@@ -346,8 +335,6 @@ def newDpto():
     return dpto
 
 
-
-
 # Funciones de consulta
 
 def getArtistYear(catalog, year_i, year_f):
@@ -367,28 +354,51 @@ def getArtistYear(catalog, year_i, year_f):
     
     return artist_inrange
 
-def getMedium(catalog, Medium):
+def getArtworkYear(catalog, fecha_i, fecha_f):
+
+    pass
+
+def getArtistTecnique(catalog, artist_name):
     """
-    Retorna las obras de arte de un medio específico
+    Retorna las obras de arte de un artista clasificadas por medio/técnica
     """
-    medium_pareja = mp.get(catalog['Medium'], Medium)
-    if medium_pareja:
-        lista_obras = me.getValue(medium_pareja)
-        return lista_obras['Artworks']
-    return None
+    artist_map = mp.get(catalog['ArtistTecnique'], artist_name)
+    mayor_num = 0
+    mayor_elem = None
+    
+    if artist_map:
+        tecnique_map = me.getValue(artist_map)
+        tecnique_values = mp.valueSet(tecnique_map['Artworks'])
+        tamano_tecs = mp.size(tecnique_map['Artworks'])
+        total_obras = 0
+
+        for artwork in lt.iterator(tecnique_values):
+            total_obras += lt.size(artwork['Artworks'])
+
+            if lt.size(artwork['Artworks']) > mayor_num:
+                mayor_num = lt.size(artwork['Artworks'])
+                mayor_elem = artwork
+
+    return mayor_elem, tamano_tecs, total_obras
+
 
 def getNationality(catalog):
     """
     Retorna las obras de arte de un medio específico
     """
-    for artist in lt.iterator(catalog['Artist']):
-        Nationality = artist['Nationality']
-        nation_pareja = mp.get(catalog['Nationality'], Nationality)
-        if nation_pareja:
-            lista_obras = me.getValue(nation_pareja)
+    answer = lt.newList("ARRAY_LIST",cmpfunction=compareNationality)
+    Nationality = catalog['Nationality']
+    nation_names = mp.keySet(Nationality)
+    for name in lt.iterator(nation_names):
+        nation_pareja = mp.get(Nationality, name)
+        nation_pareja = me.getValue(nation_pareja)
+        nation_size = lt.size(nation_pareja)
+    
+    if nation_pareja:
+        lista_obras = me.getValue(nation_pareja)
 
-            return lista_obras['Artworks']
-        return None
+        return lista_obras['Artworks']
+    return answer
 
 def getTranspCost(catalog, dpto):
     start_time = time.process_time()
@@ -662,4 +672,3 @@ def sortTranspOld(list_old):
 def sortTransportation(transp_cost):
 
     ms.sort(transp_cost, cmpTranspCost)
-
