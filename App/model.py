@@ -92,6 +92,14 @@ def newCatalog():
     """
     Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
     """
+    catalog['ArtworkDates'] = mp.newMap(100,
+                                   maptype='PROBING',
+                                   loadfactor= 0.5,
+                                   comparefunction=compareMapArtworkDate)
+
+    """
+    Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
+    """
     catalog['ArtistTecnique'] = mp.newMap(100,
                                 maptype='PROBING',
                                 loadfactor=0.5,
@@ -251,9 +259,8 @@ def addMedium(medium, medium_name, artwork):
         mp.put(mediums, medium_name, medium_value)
         medium['TotalMedium'] += 1
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
-    
     mayor = 0
-    if lt.size(medium_value['Artworks']) > mayor: #TODO PROBLEMA AQUI, CONTADOR SE REINICIA Y NO CUENTAA
+    if lt.size(medium_value['Artworks']) > mayor: #TODO PROBLEMA AQUI, CONTADOR SE REINICIA POR CADA LINEA DEL ARCHIVO Y NO CUENTAA
             mayor = lt.size(medium_value['Artworks'])
             medium['MediumMayor'] = medium_value
 
@@ -289,9 +296,39 @@ def newDate(date):
     return date
 
 def addArtworkDate(catalog,fecha_ad, artwork):
-    fecha_sep = (fecha_ad).split('-')
 
-    pass
+    if fecha_ad != '' :
+
+        date_sep = (fecha_ad).split('-')
+
+        year_int = int(date_sep[0])
+
+        artwork_filt = {'Title': artwork['Title'],
+                    'Artist/s': artwork['Artists'],
+                    'Date': artwork['Date'],
+                    'Medium':artwork['Medium'],
+                    'Dimensions': artwork['Dimensions']
+                    }
+
+        dates_map = catalog['ArtworkDates']
+        existdate = mp.contains(dates_map, year_int)
+        if existdate:
+            entry = mp.get(dates_map, year_int)
+            date_value = me.getValue(entry)
+        else:
+            date_value = newArtDate(year_int)
+            mp.put(dates_map, year_int, date_value)
+        lt.addLast(date_value['Artworks'], year_int)
+
+
+def newArtDate(year):
+
+    date = {'Year': year,
+            'Artworks':None}
+
+    date['Artworks'] = lt.newList('ARRAY_LIST')
+    
+    return date
 
 def newNationality():
     """
@@ -592,7 +629,8 @@ def cost_volume(artwork):
 
 
 def getProlificArtists(artists_inrange, num):
-    
+
+
     pass
 
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -631,6 +669,19 @@ def compareMapArtistDate(date1,entry):
         return 1
     else:
         return -1
+
+def compareMapArtworkDate(date1, entry):
+    date1_int = int(date1)
+
+    date2entry = me.getKey(entry)
+
+    if (int(date1) == int(date2entry)):
+        return 0
+    elif (int(date1) > int(date2entry)):
+        return 1
+    else:
+        return -1
+
 
 def compareArtistsByName(Key_artID, artist_ID):
     """
