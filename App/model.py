@@ -171,6 +171,7 @@ def addArtwork(catalog,artwork):
     for id in artist_id:
 
         addArtistTecnique(catalog,id,artwork)
+        addNationality(catalog,id,artwork)
 
 def addArtistTecnique(catalog,id,artwork):
     """
@@ -186,6 +187,7 @@ def addArtistTecnique(catalog,id,artwork):
         lt.addLast(artist['Artworks'], artwork)
         lt.addLast(artwork['Artists'], artist['DisplayName'])
 
+    #clasificar al artista por técnica
     artists_map = catalog['ArtistTecnique']
     existartist = mp.contains(artists_map, artist['DisplayName'])
 
@@ -330,37 +332,45 @@ def newArtDate(year):
     
     return date
 
-def newNationality():
+def newNationality(nation):
     """
     Crea una nueva estructura para modelar los libros de un autor
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    nationality_work = {
+    nationality_work = {'Nationality': nation,
               "Artworks": None}
 
     nationality_work['Artworks'] = lt.newList('ARRAY_LIST', cmpfunction = compareObjectID)
     return nationality_work
 
-def addNationality(catalog, nation_name, artist):
+def addNationality(catalog, id, artwork):
     """
     Esta función adiciona una obra de arte a un maps que los clasifica por medio.
     """
-    artwork_filtrada = {'DisplayName':artist['DisplayName'], 
-                    'Nationality':artist['Nationality'], 
-                    'Artworks':artist['Artworks'],}
+    artists = catalog['Artists']
 
-    nations = catalog['Nationality']
-    existmedium = mp.contains(nations, nation_name)
-    nation_value = artwork_filtrada['Artworks']
+    posartist = lt.isPresent(artists, id)
+
+    if posartist > 0:
+        artist = lt.getElement(artists, posartist)
+        lt.addLast(artist['Artworks'], artwork)
+        lt.addLast(artwork['Artists'], artist['DisplayName'])
+
+    #Clasificar obras por nacionalidad
+
+    nations_map = catalog['Nationality']
+    nation_name = artist['Nationality']
+    existnation = mp.contains(nations_map, nation_name)
 
     #si la nacionalidad no existe en el indice
-    if not existmedium:
-        entry = mp.put(nations, nation_name, nation_value)
+    if not existnation:
+        nation_value = newNationality(nation_name)
+        mp.put(nations_map, nation_name, nation_value)
         
     #cuando existe y se debe actualizar
-    elif existmedium:
-        temp_artwork = mp.get(nations, nation_name)
+    elif existnation:
+        temp_artwork = mp.get(nations_map, nation_name)
         temp_artwork = me.getValue(temp_artwork)
         for work in lt.iterator(nation_value):
             lt.addLast(temp_artwork,work)
