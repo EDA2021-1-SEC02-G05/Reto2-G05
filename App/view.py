@@ -40,13 +40,12 @@ operación solicitada
 def printMenu():
     print("Bienvenido")
     print("0- Cargar información en el catálogo")
-    #print("1- Obras más antiguas por técinca")
     print("1- Listar cronológicamente los artistas")
     print("2- Listar cronológicamente las adquisiciones")
     print("3- Clasificar las obras de una artista por técnica")
     print("4- Clasificar las obras por nacionalidad de sus creadores")
     print("5- Transportar obras de un departamento")
-    print("6- Nuevo exposición en el museo")
+    print("6- Artistas más prolíferos en el museo")
     print("7- Salir")
 
 catalog = None
@@ -253,6 +252,14 @@ while True:
 
     elif int(inputs[0]) == 6:
         'Requerimiento 6: Artistas más prolíferos '
+
+        numero_artistas = int(input('Número de artistas que desea en la clasificación: '))
+        año_inicial = int(input('Año inicial para el rango de busqueda: '))
+        año_final = int(input('Año final para el rango de busqueda: '))
+
+        artists_inrange = controller.getArtistYear(catalog, año_inicial, año_final)
+        proliferos = controller.getProlificArtists(artists_inrange, numero_artistas )
+
 
 
     else:

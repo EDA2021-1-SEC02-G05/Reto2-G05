@@ -184,26 +184,37 @@ def addArtistTecnique(catalog,id,artwork):
     if existartist:
         entry = mp.get(artists_map, artist['DisplayName'])
         artist_value = me.getValue(entry)
+        artist_value['TotalArtworks'] += 1
         addMedium(artist_value, artwork['Medium'], artwork)
+
     else:
-        artist_value = newArtist()
+        artist_value = newArtist(artist['DisplayName'])
         addMedium(artist_value, artwork['Medium'], artwork)
         mp.put(artists_map, artist['DisplayName'], artist_value)
 
 
-def newArtist():
+def newArtist(name):
     """
     Crea una nueva estructura para modelar los libros de un autor
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    artist_tec = {
-                    "Artworks": None}
+    artist_tec = {  'Artist':'',
+                    'TotalArtworks':'',
+                    'MediumMayor':None,
+                    "Artworks": None,
+                    'TotalMedium':0}
+
+    artist_tec['Artworks'] = name
 
     artist_tec['Artworks'] = mp.newMap(200,
                                    maptype='PROBING',
                                    loadfactor=0.5,
                                    comparefunction=compareMapMediums)
+
+    artist_tec['TotalArtworks'] = 1
+
+
     return artist_tec
 
 def newMedium(tec):
@@ -218,10 +229,12 @@ def newMedium(tec):
     medium['Artworks'] = lt.newList('ARRAY_LIST')
     return medium
 
+
 def addMedium(medium, medium_name, artwork):
     """
     Esta función adiciona una obra de arte a un maps que los clasifica por medio.
     """
+    
     artwork_filtrada = {'ObjectID':artwork['ObjectID'], 
                     'Title':artwork['Title'], 
                     'Date': artwork[ 'Date'],
@@ -236,7 +249,13 @@ def addMedium(medium, medium_name, artwork):
     else:
         medium_value = newMedium(medium_name)
         mp.put(mediums, medium_name, medium_value)
+        medium['TotalMedium'] += 1
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
+    
+    mayor = 0
+    if lt.size(medium_value['Artworks']) > mayor: #TODO PROBLEMA AQUI, CONTADOR SE REINICIA Y NO CUENTAA
+            mayor = lt.size(medium_value['Artworks'])
+            medium['MediumMayor'] = medium_value
 
 
 def addArtistDate(catalog,begindate ,artist):
@@ -271,7 +290,7 @@ def newDate(date):
 
 def addArtworkDate(catalog,fecha_ad, artwork):
     fecha_sep = (fecha_ad).split('-')
-    
+
     pass
 
 def newNationality():
@@ -370,10 +389,9 @@ def getArtistTecnique(catalog, artist_name):
         tecnique_map = me.getValue(artist_map)
         tecnique_values = mp.valueSet(tecnique_map['Artworks'])
         tamano_tecs = mp.size(tecnique_map['Artworks'])
-        total_obras = 0
+        total_obras = tecnique_map['TotalArtworks']
 
         for artwork in lt.iterator(tecnique_values):
-            total_obras += lt.size(artwork['Artworks'])
 
             if lt.size(artwork['Artworks']) > mayor_num:
                 mayor_num = lt.size(artwork['Artworks'])
@@ -574,6 +592,11 @@ def cost_volume(artwork):
     
     else: 
         return cost_vol4
+
+
+def getProlificArtists(artists_inrange, num):
+    
+    pass
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
