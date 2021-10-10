@@ -442,17 +442,20 @@ def getNationality(catalog):
     Retorna las obras de arte de un medio específico
     """
     answer = lt.newList("ARRAY_LIST",cmpfunction=compareNationality)
+    
     Nationality = catalog['Nationality']
     nation_names = mp.keySet(Nationality)
+    
     for name in lt.iterator(nation_names):
         nation_pareja = mp.get(Nationality, name)
         nation_pareja = me.getValue(nation_pareja)
         nation_size = lt.size(nation_pareja)
-    
-    if nation_pareja:
-        lista_obras = me.getValue(nation_pareja)
+        
 
-        return lista_obras['Artworks']
+        nation_works = {'Nationality': name,
+                        'Artworks': nation_size } 
+        lt.addLast(answer, nation_works)
+    
     return answer
 
 def getTranspCost(catalog, dpto):

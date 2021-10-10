@@ -89,7 +89,7 @@ def printArtworkDate():
     pass
 def printArtistTec():
     pass
-def printArtworkNationality(nationalities, tiempo):
+def printArtworkNationality(nationalities):
     print('Las 10 nacionalidades con mayor número de obras son: ')
 
     top10 = lt.subList(nationalities,1, 10)
@@ -114,7 +114,7 @@ def printArtworkNationality(nationalities, tiempo):
             #print(artwork)
             print("Titulo: " + artwork["Title"] + ", Artista/s : " + str(artwork["Artists"]["elements"])+ ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
     
-    print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
+    #print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
 
 
 def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
@@ -146,8 +146,7 @@ def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
     else:
         print('No se encontraron obras de arte de la técnica requerida.')
 
-def printArtworkNationality():
-    pass
+
 def printTransportationCost(transportation, costo_total, old, peso_total, dpto, tiempo):
     tamano = lt.size(transportation)
     if tamano > 0 :
@@ -241,7 +240,7 @@ while True:
         "Requerimiento 4: clasifica las obras por la nacionalidad de sus creadores"
   
         nationalities = controller.getNationality(catalog)
-        printArtworkNationality(nationalities[0],nationalities[1])
+        print(nationalities)
 
     elif int(inputs[0]) == 5:
 
