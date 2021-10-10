@@ -163,7 +163,7 @@ def addArtwork(catalog,artwork):
     for id in artist_id:
 
         addArtistTecnique(catalog,id,artwork)
-        addArtistN(catalog,id,artwork)
+        #addArtistN(catalog,id,artwork)
 
 def addArtistTecnique(catalog,id,artwork):
     """
@@ -192,35 +192,28 @@ def addArtistTecnique(catalog,id,artwork):
         artist_value = newArtist(artist['DisplayName'])
         addMedium(artist_value, artwork['Medium'], artwork)
         mp.put(artists_map, artist['DisplayName'], artist_value)
-####
-def addArtistN(catalog,id,artwork):
+  ####  
+def addArtistNation(catalog,id,artwork):
     """
-    Función que primero busca en la lista de artistas el artista que le corresponde al ID que está entrando como parámetro y luego con el displayname de ese artista
-    crea un map cuya llave es el nombre del artista y el valor asociado es un map clasificando sus obras de arte por técnicas.
+    #Función que primero busca en la lista de artistas el artista que le corresponde al ID que está entrando como parámetro y luego con el displayname de ese artista
+    #crea un map cuya llave es el nombre del artista y el valor asociado es un map clasificando sus obras de arte por técnicas.
     """
     artists = catalog['Artists']
 
-    posartist = lt.isPresent(artists, id)
-
-    if posartist > 0:
-        artist = lt.getElement(artists, posartist)
-        lt.addLast(artist['Artworks'], artwork)
-        lt.addLast(artwork['Artists'], artist['DisplayName'])
-
     artists_map = catalog['Nationality']
-    existartist = mp.contains(artists_map, artist['DisplayName'])
+    existartist = mp.contains(artists_map, artists['DisplayName'])
 
     if existartist:
-        entry = mp.get(artists_map, artist['DisplayName'])
+        entry = mp.get(artists_map, artists['DisplayName'])
         artist_value = me.getValue(entry)
         artist_value['TotalArtworks'] += 1
-        addNationality(artist_value, artist['Nationality'], artwork)
+        addNationality(artist_value, artists['Nationality'], artwork)
 
     else:
-        artist_value = newArtist(artist['DisplayName'])
-        addNationality(artist_value, artist['Nationality'], artwork)
-        mp.put(artists_map, artist['DisplayName'], artist_value)
-#####
+        artist_value = newArtist(artists['DisplayName'])
+        addNationality(artist_value, artists['Nationality'], artwork)
+        mp.put(artists_map, artists['DisplayName'], artist_value)
+    
 
 def newArtist(name):
     """
@@ -442,6 +435,8 @@ def getNationality(catalog):
     """
     Retorna las obras de arte de un medio específico
     """
+    """"
+    
     answer = lt.newList("ARRAY_LIST",cmpfunction=compareNationality)
     
     Nationality = catalog['Nationality']
@@ -458,6 +453,31 @@ def getNationality(catalog):
         lt.addLast(answer, nation_works)
     
     return answer
+    """
+    Nationality = catalog['Nationality']
+    artist = catalog["Artists"]
+    artist_name = mp.keySet(artist)
+
+
+    mayor_num = 0
+    mayor_elem = None
+    
+    for name in lt.iterator(artist_name):
+        artist_map = mp.get(Nationality, name)
+        
+        if artist_map:
+            tecnique_map = me.getValue(artist_map)
+            tecnique_values = mp.valueSet(tecnique_map['Artworks'])
+            tamano_tecs = mp.size(tecnique_map['Artworks'])
+            total_obras = tecnique_map['TotalArtworks']
+
+            for artwork in lt.iterator(tecnique_values):
+
+                if lt.size(artwork['Artworks']) > mayor_num:
+                    mayor_num = lt.size(artwork['Artworks'])
+                    mayor_elem = artwork
+
+    return mayor_elem, tamano_tecs, total_obras
 
 def getTranspCost(catalog, dpto):
     start_time = time.process_time()
