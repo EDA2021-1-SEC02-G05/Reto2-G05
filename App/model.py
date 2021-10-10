@@ -412,7 +412,7 @@ def getArtistYear(catalog, year_i, year_f):
         if pareja_year:
             year_value = me.getValue(pareja_year)
 
-            for artist in lt.iterator(year_value['Artists']): #hay alguna forma de concatenar listas de estas?
+            for artist in lt.iterator(year_value['Artists']): #TODO: hay alguna forma de concatenar listas de estas sin hacer fors?
                 lt.addLast(artist_inrange,artist)
         
         i += 1
