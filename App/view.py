@@ -43,7 +43,8 @@ def printMenu():
     print("1- Listar cronológicamente los artistas")
     print("2- Listar cronológicamente las adquisiciones")
     print("3- Clasificar las obras de una artista por técnica")
-    print("4- Clasificar las obras por nacionalidad de sus creadores")
+    print("4- Numero de obras asociadas a una nacionalidad (lab 6)")
+    #print("4- Clasificar las obras por nacionalidad de sus creadores")
     print("5- Transportar obras de un departamento")
     print("6- Artistas más prolíferos en el museo")
     print("7- Salir")
@@ -184,6 +185,8 @@ while True:
         catalog = initCatalog()
         loadData(catalog)
 
+        #print(catalog['Nationality'])
+
         tamano_artwork = lt.size(catalog['Artworks'])
         tamano_artist = lt.size(catalog['Artists'])
 
@@ -238,8 +241,13 @@ while True:
     elif int(inputs[0]) == 4:
 
         "Requerimiento 4: clasifica las obras por la nacionalidad de sus creadores"
-  
-        nationalities = controller.getNationality(catalog)
+
+        #lab 6 
+
+        nationality = (input('Nacionalidad que desea consultar: ')).lower()
+         
+        nationalities = controller.getNationality(catalog, nationality)
+
         print(nationalities)
 
     elif int(inputs[0]) == 5:

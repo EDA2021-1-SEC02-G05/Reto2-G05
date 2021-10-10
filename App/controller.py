@@ -94,11 +94,11 @@ def getArtistTecnique(catalog, name):
     """
     return model.getArtistTecnique(catalog, name)
 
-def getNationality(catalog):
+def getNationality(catalog, nationality):
     """
     Retorna las obras de arte de un artista segun su técnica
     """
-    return model.getNationality(catalog)
+    return model.getNationality(catalog, nationality)
 
 def getTranspCost(catalog, dpto):
 
