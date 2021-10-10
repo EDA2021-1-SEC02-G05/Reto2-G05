@@ -363,8 +363,8 @@ def addNationality(catalog, id, artwork):
     elif existnation:
         temp_artwork_entry = mp.get(nations_map, nation_name)
         nation_value = me.getValue(temp_artwork_entry)
-        
-        mp.put(nations, nation_name, temp_artwork)
+
+    lt.addLast(nation_value['Artworks'], artwork)
 
 
 def addDpto(catalog,dpto ,artwork):
