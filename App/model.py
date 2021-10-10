@@ -370,10 +370,9 @@ def addNationality(catalog, id, artwork):
         
     #cuando existe y se debe actualizar
     elif existnation:
-        temp_artwork = mp.get(nations_map, nation_name)
-        temp_artwork = me.getValue(temp_artwork)
-        for work in lt.iterator(nation_value):
-            lt.addLast(temp_artwork,work)
+        temp_artwork_entry = mp.get(nations_map, nation_name)
+        nation_value = me.getValue(temp_artwork_entry)
+        
         mp.put(nations, nation_name, temp_artwork)
 
 def addDpto(catalog,dpto ,artwork):
