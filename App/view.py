@@ -259,7 +259,7 @@ while True:
         año_final = int(input('Año final para el rango de busqueda: '))
 
         artists_inrange = controller.getArtistYear(catalog, año_inicial, año_final)
-        proliferos = controller.getProlificArtists(artists_inrange, numero_artistas )
+        proliferos = controller.getProlificArtists(artists_inrange, numero_artistas)
 
 
 
