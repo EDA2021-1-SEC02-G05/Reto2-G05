@@ -92,14 +92,6 @@ def newCatalog():
     """
     Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
     """
-    catalog['ArtworkDates'] = mp.newMap(100,
-                                   maptype='PROBING',
-                                   loadfactor= 0.5,
-                                   comparefunction=compareMapArtworkDate)
-
-    """
-    Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
-    """
     catalog['ArtistTecnique'] = mp.newMap(100,
                                 maptype='PROBING',
                                 loadfactor=0.5,
@@ -171,7 +163,7 @@ def addArtwork(catalog,artwork):
     for id in artist_id:
 
         addArtistTecnique(catalog,id,artwork)
-        addNationality(catalog,id,artwork)
+        addArtistN(catalog,id,artwork)
 
 def addArtistTecnique(catalog,id,artwork):
     """
@@ -187,7 +179,6 @@ def addArtistTecnique(catalog,id,artwork):
         lt.addLast(artist['Artworks'], artwork)
         lt.addLast(artwork['Artists'], artist['DisplayName'])
 
-    #clasificar al artista por técnica
     artists_map = catalog['ArtistTecnique']
     existartist = mp.contains(artists_map, artist['DisplayName'])
 
@@ -201,7 +192,35 @@ def addArtistTecnique(catalog,id,artwork):
         artist_value = newArtist(artist['DisplayName'])
         addMedium(artist_value, artwork['Medium'], artwork)
         mp.put(artists_map, artist['DisplayName'], artist_value)
+####
+def addArtistN(catalog,id,artwork):
+    """
+    Función que primero busca en la lista de artistas el artista que le corresponde al ID que está entrando como parámetro y luego con el displayname de ese artista
+    crea un map cuya llave es el nombre del artista y el valor asociado es un map clasificando sus obras de arte por técnicas.
+    """
+    artists = catalog['Artists']
 
+    posartist = lt.isPresent(artists, id)
+
+    if posartist > 0:
+        artist = lt.getElement(artists, posartist)
+        lt.addLast(artist['Artworks'], artwork)
+        lt.addLast(artwork['Artists'], artist['DisplayName'])
+
+    artists_map = catalog['Nationality']
+    existartist = mp.contains(artists_map, artist['DisplayName'])
+
+    if existartist:
+        entry = mp.get(artists_map, artist['DisplayName'])
+        artist_value = me.getValue(entry)
+        artist_value['TotalArtworks'] += 1
+        addNationality(artist_value, artist['Nationality'], artwork)
+
+    else:
+        artist_value = newArtist(artist['DisplayName'])
+        addNationality(artist_value, artist['Nationality'], artwork)
+        mp.put(artists_map, artist['DisplayName'], artist_value)
+#####
 
 def newArtist(name):
     """
@@ -261,8 +280,9 @@ def addMedium(medium, medium_name, artwork):
         mp.put(mediums, medium_name, medium_value)
         medium['TotalMedium'] += 1
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
+    
     mayor = 0
-    if lt.size(medium_value['Artworks']) > mayor: #TODO PROBLEMA AQUI, CONTADOR SE REINICIA POR CADA LINEA DEL ARCHIVO Y NO CUENTAA
+    if lt.size(medium_value['Artworks']) > mayor: #TODO PROBLEMA AQUI, CONTADOR SE REINICIA Y NO CUENTAA
             mayor = lt.size(medium_value['Artworks'])
             medium['MediumMayor'] = medium_value
 
@@ -298,82 +318,51 @@ def newDate(date):
     return date
 
 def addArtworkDate(catalog,fecha_ad, artwork):
+    fecha_sep = (fecha_ad).split('-')
 
-    if fecha_ad != '' :
-
-        date_sep = (fecha_ad).split('-')
-
-        year_int = int(date_sep[0])
-
-        artwork_filt = {'Title': artwork['Title'],
-                    'Artist/s': artwork['Artists'],
-                    'Date': artwork['Date'],
-                    'Medium':artwork['Medium'],
-                    'Dimensions': artwork['Dimensions']
-                    }
-
-        dates_map = catalog['ArtworkDates']
-        existdate = mp.contains(dates_map, year_int)
-        if existdate:
-            entry = mp.get(dates_map, year_int)
-            date_value = me.getValue(entry)
-        else:
-            date_value = newArtDate(year_int)
-            mp.put(dates_map, year_int, date_value)
-        lt.addLast(date_value['Artworks'], year_int)
+    pass
 
 
-def newArtDate(year):
-
-    date = {'Year': year,
-            'Artworks':None}
-
-    date['Artworks'] = lt.newList('ARRAY_LIST')
-    
-    return date
-
-def newNationality(nation):
+def newNationality():
     """
     Crea una nueva estructura para modelar los libros de un autor
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    nationality_work = {'Nationality': nation,
+    nationality_work = {
               "Artworks": None}
 
     nationality_work['Artworks'] = lt.newList('ARRAY_LIST', cmpfunction = compareObjectID)
     return nationality_work
 
-def addNationality(catalog, id, artwork):
+def addNationality(catalog, nation_name, artist):
     """
     Esta función adiciona una obra de arte a un maps que los clasifica por medio.
     """
-    artists = catalog['Artists']
+    artwork_filtrada = {'DisplayName':artist['DisplayName'], 
+                    'Nationality':artist['Nationality'], 
+                    'Artworks':artist['Artworks'],}
 
-    posartist = lt.isPresent(artists, id)
-
-    if posartist > 0:
-        artist = lt.getElement(artists, posartist)
-        lt.addLast(artist['Artworks'], artwork)
-        lt.addLast(artwork['Artists'], artist['DisplayName'])
-
-    #Clasificar obras por nacionalidad
-
-    nations_map = catalog['Nationality']
-    nation_name = artist['Nationality']
-    existnation = mp.contains(nations_map, nation_name)
+    nations = catalog['Nationality']
+    existmedium = mp.contains(nations, nation_name)
+    nation_value = artwork_filtrada['Artworks']
 
     #si la nacionalidad no existe en el indice
-    if not existnation:
-        nation_value = newNationality(nation_name)
-        mp.put(nations_map, nation_name, nation_value)
+    if not existmedium:
+        nation_value = newNationality()
+        mp.put(nations, nation_name, nation_value)
         
     #cuando existe y se debe actualizar
-    elif existnation:
-        temp_artwork_entry = mp.get(nations_map, nation_name)
-        nation_value = me.getValue(temp_artwork_entry)
-        
-        mp.put(nations, nation_name, temp_artwork)
+    elif existmedium:
+        entry = mp.get(nations, nation_name)
+        nation_value = me.getValue(entry)
+        #temp_artwork = mp.get(nations, nation_name)
+        #temp_artwork = me.getValue(temp_artwork)
+        #for work in lt.iterator(nation_value):
+        #    lt.addLast(temp_artwork,work)
+        #mp.put(nations, nation_name, temp_artwork)
+    lt.addLast(nation_value['Artworks'], artwork_filtrada)
+
 
 def addDpto(catalog,dpto ,artwork):
 
@@ -641,8 +630,7 @@ def cost_volume(artwork):
 
 
 def getProlificArtists(artists_inrange, num):
-
-
+    
     pass
 
 # Funciones utilizadas para comparar elementos dentro de una lista
@@ -681,19 +669,6 @@ def compareMapArtistDate(date1,entry):
         return 1
     else:
         return -1
-
-def compareMapArtworkDate(date1, entry):
-    date1_int = int(date1)
-
-    date2entry = me.getKey(entry)
-
-    if (int(date1) == int(date2entry)):
-        return 0
-    elif (int(date1) > int(date2entry)):
-        return 1
-    else:
-        return -1
-
 
 def compareArtistsByName(Key_artID, artist_ID):
     """
