@@ -92,6 +92,14 @@ def newCatalog():
     """
     Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
     """
+    catalog['ArtworkDates'] = mp.newMap(100,
+                                   maptype='PROBING',
+                                   loadfactor= 0.5,
+                                   comparefunction=compareMapArtworkDates)
+
+    """
+    Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
+    """
     catalog['ArtistTecnique'] = mp.newMap(100,
                                 maptype='PROBING',
                                 loadfactor=0.8,
@@ -424,12 +432,6 @@ def getArtworkYear(catalog, fecha_i, fecha_f):
                 if d1 >= di and d1 <= df:
                     pass
 
-
-
-
-
-
-    pass
 
 def getArtistTecnique(catalog, artist_name):
     """
