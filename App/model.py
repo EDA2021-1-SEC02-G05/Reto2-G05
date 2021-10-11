@@ -398,7 +398,7 @@ def getArtistTecnique(catalog, artist_name):
     return mayor_elem, tamano_tecs, total_obras
 
 
-def getNationality(catalog, nationality):
+def getNationality_lab(catalog, nationality):
     """
     Retorna las obras de arte de un medio específico
     """
@@ -453,7 +453,23 @@ def getNationality(catalog, nationality):
 
     return total_obras
 
+def getNationality(catalog):
 
+    answer = lt.newList("ARRAY_LIST",cmpfunction=compareNationality)
+
+    nation_map = catalog['Nationality']
+    nationality =  mp.keySet(nation_map)
+    
+    for name in lt.iterator(nationality):
+        nationality_entry = mp.get(nation_map, name)
+        nationality_value = me.getValue(nationality_entry)
+
+        total_obras = lt.size(nationality_value['Artworks'])
+        diccionario = {"Nationality": name,
+                        "Númeoro de obras": total_obras}
+        lt.addLast(answer, diccionario)
+
+    return answer
 
 def getTranspCost(catalog, dpto):
     start_time = time.process_time()
