@@ -190,6 +190,7 @@ while True:
         print(elapsed_time_mseg)
 
         #print(catalog['Nationality'])
+        #print(catalog['ArtistTecnique'])
 
         tamano_artwork = lt.size(catalog['Artworks'])
         tamano_artist = lt.size(catalog['Artists'])
