@@ -23,6 +23,7 @@
 import config as cf
 import model
 import csv
+import time
 
 
 """
@@ -45,16 +46,20 @@ def loadData(catalog):
     Carga los datos de los archivos y cargar los datos en la
     estructura de datos
     """
-    
+    start_time = time.process_time()
     loadArtists(catalog)
     loadArtworks(catalog)
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+    
+    return elapsed_time_mseg
 
 def loadArtists(catalog):
     """
     Carga los artistas del archivo.  Por cada artista se indica al
     modelo que debe adicionarlo al catalogo.
     """
-    booksfile = cf.data_dir + 'Artists-utf8-5pct.csv'
+    booksfile = cf.data_dir + 'Artists-utf8-small.csv'
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for artist in input_file:
         model.addArtist(catalog, artist)
@@ -64,7 +69,7 @@ def loadArtworks(catalog):
     Carga todas las obras de arte del archivo e indica al modelo
     que los adicione al catalogo
     """
-    tagsfile = cf.data_dir + 'Artworks-utf8-5pct.csv'
+    tagsfile = cf.data_dir + 'Artworks-utf8-small.csv'
     input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
     
     for artwork in input_file:

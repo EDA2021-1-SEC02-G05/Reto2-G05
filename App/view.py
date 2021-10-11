@@ -25,6 +25,7 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 assert cf
+import time
 
 
 
@@ -181,11 +182,15 @@ while True:
     inputs = input('Seleccione una opción para continuar\n')
     if int(inputs[0]) == 0:
         print("Cargando información de los archivos ....")
-
+        start_time = time.process_time()
         catalog = initCatalog()
         loadData(catalog)
+        stop_time = time.process_time()
+        elapsed_time_mseg = (stop_time - start_time)*1000
+        print(elapsed_time_mseg)
 
         #print(catalog['Nationality'])
+        #print(catalog['ArtistTecnique'])
 
         tamano_artwork = lt.size(catalog['Artworks'])
         tamano_artist = lt.size(catalog['Artists'])
