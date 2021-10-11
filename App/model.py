@@ -272,7 +272,7 @@ def addArtistNation(catalog,id,artwork):
     nation_name = artist['Nationality']
     if nation_name == '' or nation_name == 'nationalityunknown':
         nation_name = 'unknown'
-        
+
     existnation = mp.contains(nationality_map, nation_name)
 
     if existnation:
@@ -327,8 +327,36 @@ def newDate(date):
     return date
 
 def addArtworkDate(catalog,fecha_ad, artwork):
-    fecha_sep = (fecha_ad).split('-')
 
+    if  fecha_ad != '':
+        fecha_sep = (fecha_ad).split('-')
+        year_int = int(fecha_sep[0])
+
+        artwork_filt = {'Title': artwork['Title'],
+                    'Artists': artwork['Artists'],
+                    'Date': artwork['Date'],
+                    'Medium':artwork['Medium'],
+                    'Dimensions': artwork['Dimensions']
+                    }
+
+        dates_map = catalog['ArtworkDates']
+        existdate = mp.contains(dates_map, year_int)
+        if existdate:
+            entry = mp.get(dates_map, year_int)
+            date_value = me.getValue(entry)
+        else:
+            date_value = newArtworkDate(year_int)
+            mp.put(dates_map, year_int, date_value)
+        lt.addLast(date_value['Artworks'], artwork_filt)
+
+def newArtworkDate(date):
+
+    date = {'Year': date,
+            'Artworks':None}
+
+    date['Artworks'] = lt.newList('ARRAY_LIST')
+    
+    return date
 
 def addDpto(catalog,dpto ,artwork):
 
@@ -375,6 +403,31 @@ def getArtistYear(catalog, year_i, year_f):
     return artist_inrange
 
 def getArtworkYear(catalog, fecha_i, fecha_f):
+    fecha_i_sep = (fecha_i).split('-')
+    fecha_f_sep = (fecha_f).split('-')
+    artwork_inrange = lt.newList('ARRAY_LIST')
+
+    i = int(fecha_i_sep[0]) 
+
+    while i >= int(fecha_i_sep[0]) and i <= int(fecha_f_sep[0]):
+        di = d.datetime(int(fecha_i_sep[0]),int(fecha_i_sep[1]), int(fecha_i_sep[2]))
+        df = d.datetime(int(fecha_f_sep[0]),int(fecha_f_sep[1]), int(fecha_f_sep[2]))
+        pareja_year = mp.get(catalog['ArtworkDates'], i)
+
+        if pareja_year:
+            year_value = me.getValue(pareja_year)
+
+            for artwork in lt.iterator(year_value['Artworks']):
+                date_artwork = artwork['DateAcquired'].split("-")
+                d1 = d.datetime(int(date_artwork[0]),int(date_artwork[1]), int(date_artwork[2]))
+
+                if d1 >= di and d1 <= df:
+                    pass
+
+
+
+
+
 
     pass
 
@@ -396,7 +449,7 @@ def getArtistTecnique(catalog, artist_name):
 
             if lt.size(artwork['Artworks']) > mayor_num:
                 mayor_num = lt.size(artwork['Artworks'])
-                mayor_elem = artwork
+                mayor_elem = artwork #TODO: debe haber una forma más eficiente, lo se
 
     return mayor_elem, tamano_tecs, total_obras
 
