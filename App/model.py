@@ -270,6 +270,9 @@ def addArtistNation(catalog,id,artwork):
 
     nationality_map = catalog['Nationality']
     nation_name = artist['Nationality']
+    if nation_name == '' or nation_name == 'nationalityunknown':
+        nation_name = 'unknown'
+        
     existnation = mp.contains(nationality_map, nation_name)
 
     if existnation:
@@ -423,7 +426,7 @@ def getNationality(catalog):
 
         total_obras = lt.size(nationality_value['Artworks'])
         diccionario = {"Nationality": name,
-                        "Númeoro de obras": total_obras}
+                        "Número de obras": total_obras}
         lt.addLast(answer, diccionario)
 
     return answer
