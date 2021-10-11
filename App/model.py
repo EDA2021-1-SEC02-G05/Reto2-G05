@@ -94,14 +94,14 @@ def newCatalog():
     """
     catalog['ArtistTecnique'] = mp.newMap(100,
                                 maptype='PROBING',
-                                loadfactor=0.5,
+                                loadfactor=0.8,
                                 comparefunction=compareArtistsByName)
     """
     Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
     """
     catalog['Nationality'] = mp.newMap(100,
                                 maptype='PROBING',
-                                loadfactor=0.5,
+                                loadfactor=0.8,
                                 comparefunction=compareNationality)
     """
     Este indice crea un map cuya llave es el departamento y el valor son sus obras de arte
