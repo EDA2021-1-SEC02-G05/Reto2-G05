@@ -189,9 +189,6 @@ while True:
         elapsed_time_mseg = (stop_time - start_time)*1000
         print(elapsed_time_mseg)
 
-        #print(catalog['Nationality'])
-        #print(catalog['ArtistTecnique'])
-
         tamano_artwork = lt.size(catalog['Artworks'])
         tamano_artist = lt.size(catalog['Artists'])
 
