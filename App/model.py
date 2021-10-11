@@ -399,50 +399,7 @@ def getArtistTecnique(catalog, artist_name):
 
 
 def getNationality_lab(catalog, nationality):
-    """
-    Retorna las obras de arte de un medio específico
-    """
-    """"
-    
-    answer = lt.newList("ARRAY_LIST",cmpfunction=compareNationality)
-    
-    Nationality = catalog['Nationality']
-    nation_names = mp.keySet(Nationality)
-    
-    for name in lt.iterator(nation_names):
-        nation_pareja = mp.get(Nationality, name)
-        nation_pareja = me.getValue(nation_pareja)
-        nation_size = lt.size(nation_pareja)
-        
-
-        nation_works = {'Nationality': name,
-                        'Artworks': nation_size } 
-        lt.addLast(answer, nation_works)
-    
-    return answer
-    
-    nationality_map= catalog['Nationality']
-
-    mayor_num = 0
-    mayor_elem = None
-    
-    for name in lt.iterator(artist_name):
-        artist_map = mp.get(nationality_map, name)
-        
-        if artist_map:
-            tecnique_map = me.getValue(artist_map)
-            tecnique_values = mp.valueSet(tecnique_map['Artworks'])
-            tamano_tecs = mp.size(tecnique_map['Artworks'])
-            total_obras = tecnique_map['TotalArtworks']
-
-            for artwork in lt.iterator(tecnique_values):
-
-                if lt.size(artwork['Artworks']) > mayor_num:
-                    mayor_num = lt.size(artwork['Artworks'])
-                    mayor_elem = artwork
-
-    return mayor_elem, tamano_tecs, total_obras
-    """
+   
     #Parte del lab 6
 
     nation_map = catalog['Nationality']
