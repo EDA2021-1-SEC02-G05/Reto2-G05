@@ -95,7 +95,7 @@ def newCatalog():
     catalog['ArtworkDates'] = mp.newMap(100,
                                    maptype='PROBING',
                                    loadfactor= 0.5,
-                                   comparefunction=compareMapArtworkDates)
+                                   comparefunction=compareMapArtistDate)
 
     """
     Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
@@ -164,7 +164,7 @@ def addArtwork(catalog,artwork):
     department = artwork['Department']
     addDpto(catalog, department, artwork)
 
-    #addArtworkDate(catalog, artwork['DateAcquired'], artwork)
+    addArtworkDate(catalog, artwork['DateAcquired'], artwork)
 
     artist_id = artwork['ConstituentID'].split(',')
     
