@@ -464,11 +464,20 @@ def getNationality(catalog):
         nationality_entry = mp.get(nation_map, name)
         nationality_value = me.getValue(nationality_entry)
 
+        artworks = nationality_value['Artworks']
+        #artwork_filtrada = {'Title': artworks['Title'],
+        #                    'Date': artworks['Date'],
+        #                    'Medium': artworks['Medium'],
+        #                    'Dimensions': artworks['Dimensions']}
+        
         total_obras = lt.size(nationality_value['Artworks'])
         diccionario = {"Nationality": name,
-                        "Númeoro de obras": total_obras}
+                        "Total works": total_obras,
+                        #"Artwork": artwork_filtrada
+                        }
         lt.addLast(answer, diccionario)
-
+    
+    sortNationalitysize(answer)
     return answer
 
 def getTranspCost(catalog, dpto):
@@ -716,6 +725,10 @@ def compareNationality (nationality, entry):
     else:
         return -1
 
+def cmpNationalitysize(nat1,nat2):
+
+    return (nat1['Total works']) > (nat2['Total works'])
+
 def cmpArtworkYear(artwork1,artwork2):
     return int(artwork1['Date']) < int(artwork2['Date'])
 
@@ -748,3 +761,7 @@ def sortTranspOld(list_old):
 def sortTransportation(transp_cost):
 
     ms.sort(transp_cost, cmpTranspCost)
+
+def sortNationalitysize(nationalities):
+    
+    ms.sort(nationalities, cmpNationalitysize)
