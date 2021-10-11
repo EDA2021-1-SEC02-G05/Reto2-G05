@@ -156,7 +156,7 @@ def addArtwork(catalog,artwork):
     department = artwork['Department']
     addDpto(catalog, department, artwork)
 
-    addArtworkDate(catalog, artwork['DateAcquired'], artwork)
+    #addArtworkDate(catalog, artwork['DateAcquired'], artwork)
 
     artist_id = artwork['ConstituentID'].split(',')
     
