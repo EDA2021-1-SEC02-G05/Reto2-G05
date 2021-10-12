@@ -465,11 +465,11 @@ def getArtistTecnique(catalog, artist_name):
         tamano_tecs = mp.size(tecnique_map['Artworks'])
         total_obras = tecnique_map['TotalArtworks']
 
-        for artwork in lt.iterator(tecnique_values):
+        for tecnique in lt.iterator(tecnique_values):
 
-            if lt.size(artwork['Artworks']) > mayor_num:
-                mayor_num = lt.size(artwork['Artworks'])
-                mayor_elem = artwork #TODO: debe haber una forma más eficiente, lo se
+            if lt.size(tecnique['Artworks']) > mayor_num:
+                mayor_num = lt.size(tecnique['Artworks'])
+                mayor_elem = tecnique #TODO: debe haber una forma más eficiente, lo se
 
     stop_time = time.process_time()
     elapsed_time_mseg = (stop_time - start_time)*1000
@@ -490,6 +490,7 @@ def getNationality_lab(catalog, nationality):
 
 def getNationality(catalog):
 
+    start_time = time.process_time()
     answer = lt.newList("ARRAY_LIST",cmpfunction=compareNationality)
 
     nation_map = catalog['Nationality']
@@ -514,7 +515,9 @@ def getNationality(catalog):
         lt.addLast(answer, diccionario)
     
     sortNationalitysize(answer)
-    return answer
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+    return answer,elapsed_time_mseg
 
 def getTranspCost(catalog, dpto):
     start_time = time.process_time()
