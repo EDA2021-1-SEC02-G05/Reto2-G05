@@ -345,7 +345,8 @@ def addArtworkDate(catalog,fecha_ad, artwork):
                     'Date': artwork['Date'],
                     'Medium':artwork['Medium'],
                     'Dimensions': artwork['Dimensions'],
-                    'DateAcquired': artwork['DateAcquired']
+                    'DateAcquired': artwork['DateAcquired'],
+                    'CreditLine': artwork ['CreditLine']
                     }
 
         dates_map = catalog['ArtworkDates']
@@ -425,7 +426,7 @@ def getArtworkYear(catalog, fecha_i, fecha_f):
         df = d.datetime(int(fecha_f_sep[0]),int(fecha_f_sep[1]), int(fecha_f_sep[2]))
         pareja_year = mp.get(catalog['ArtworkDates'], i)
         i+=1
-            #DateAcquired
+        
             
         if pareja_year:
             year_value = me.getValue(pareja_year)
@@ -437,7 +438,8 @@ def getArtworkYear(catalog, fecha_i, fecha_f):
                 if d1 >= di and d1 <= df:
                     lt.addLast(artwork_inrange, artwork)
 
-    return artwork_inrange
+    size = lt.size(artwork_inrange)
+    return artwork_inrange, size
 
 
 def getArtistTecnique(catalog, artist_name):

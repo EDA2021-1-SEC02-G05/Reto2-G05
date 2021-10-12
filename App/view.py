@@ -87,8 +87,39 @@ def printArtistDate(artist,año_inicial, año_final):
     else:
         print('No se encontraron artistas nacidos en este rango de años')
 
-def printArtworkDate():
-    pass
+def printArtworkDate(artworks,año_inicial, año_final,tamaño):
+    
+    #size = lt.size(artworks)
+    size = tamaño
+
+    if size > 0:
+        first_3_artworks = lt.subList(artworks, 1, 3 )
+        last_3_artworks = lt.subList(artworks, size - 2, 3)
+
+        print ('Se encontraron ' + str(size) + ' obras de arte adquiridas en el rango de ' + str(año_inicial) + ' hasta ' + str(año_final)+ "\n")
+        cont = 0
+        for artwork in lt.iterator(artworks):
+            
+            if 'purchase' in artwork['CreditLine'].lower():
+                cont += 1
+
+        print('Se encontraron ' + str(cont) + ' obras que fueron compradas.')
+    
+        print('Las primeras 3 obras de arte encontradas en el rango son: \n')
+        for artwork in lt.iterator(first_3_artworks):
+            #print(artwork)
+            print("Titulo: " + str(artwork["Title"]) + ", Año de adquisición: " + str(artwork["DateAcquired"]) + ", Artista/s : " + str(artwork["Artists"]["elements"]) + ", Medio: "+ str(artwork["Medium"]) + ", Dimensiones: " + str(artwork["Dimensions"]))
+            
+
+        print('\nLas últimas 3 obras de arte encontradas en el rango son: \n ')
+        for artwork in lt.iterator(last_3_artworks):
+            #print(artwork)
+            print("Titulo: " + str(artwork["Title"]) + ", Año de adquisición: " + str(artwork["DateAcquired"]) + ", Artista/s : " + str(artwork["Artists"]["elements"]) + ", Medio: "+ str(artwork["Medium"]) + ", Dimensiones: " + str(artwork["Dimensions"]))
+        
+    else:
+        print('No se encontraron obras de arte adquiridas en este rango de años')
+
+
 def printArtistTec():
     pass
 def printArtworkNationality(nationalities):
@@ -230,8 +261,10 @@ while True:
         fecha_inicial = (input('Fecha inicial para el rango de busqueda: '))
         fecha_final = (input('Fecha final para el rango de busqueda: '))
         artwork = controller.getArtworkYear(catalog, fecha_inicial, fecha_final)
-        #printArtworkDate(artwork)
-        print(artwork)
+        size = artwork[1]
+        artworks = artwork[0]
+        printArtworkDate(artworks, fecha_inicial, fecha_final, size)
+        #print(artwork)
 
     elif int(inputs[0]) == 3:
 
