@@ -396,6 +396,7 @@ def newDpto():
 # Funciones de consulta
 
 def getArtistYear(catalog, year_i, year_f):
+    start_time = time.process_time()
     artist_inrange = lt.newList('ARRAY_LIST')
     i = year_i
 
@@ -409,15 +410,17 @@ def getArtistYear(catalog, year_i, year_f):
                 lt.addLast(artist_inrange,artist)
         
         i += 1
-    
-    return artist_inrange
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+    return artist_inrange, elapsed_time_mseg
 
 def getArtworkYear(catalog, fecha_i, fecha_f):
-    
+    start_time = time.process_time()
     artwork_inrange = lt.newList('ARRAY_LIST')
 
     fecha_i_sep = (fecha_i).split('-')
     fecha_f_sep = (fecha_f).split('-')
+    purchased = 0
 
     i = int(fecha_i_sep[0]) 
 
@@ -437,16 +440,21 @@ def getArtworkYear(catalog, fecha_i, fecha_f):
 
                 if d1 >= di and d1 <= df:
                     lt.addLast(artwork_inrange, artwork)
+                    if 'purchase' in artwork['CreditLine'].lower():
+                        purchased += 1
 
     size = lt.size(artwork_inrange)
     sortArtwork(artwork_inrange)
-    return artwork_inrange, size
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+    return artwork_inrange, size, elapsed_time_mseg, purchased
 
 
 def getArtistTecnique(catalog, artist_name):
     """
     Retorna las obras de arte de un artista clasificadas por medio/técnica
     """
+    start_time = time.process_time()
     artist_map = mp.get(catalog['ArtistTecnique'], artist_name)
     mayor_num = 0
     mayor_elem = None
@@ -463,7 +471,9 @@ def getArtistTecnique(catalog, artist_name):
                 mayor_num = lt.size(artwork['Artworks'])
                 mayor_elem = artwork #TODO: debe haber una forma más eficiente, lo se
 
-    return mayor_elem, tamano_tecs, total_obras
+    stop_time = time.process_time()
+    elapsed_time_mseg = (stop_time - start_time)*1000
+    return mayor_elem, tamano_tecs, total_obras, elapsed_time_mseg
 
 
 def getNationality_lab(catalog, nationality):
