@@ -89,7 +89,6 @@ def printArtistDate(artist,año_inicial, año_final):
 
 def printArtworkDate(artworks,año_inicial, año_final,tamaño):
     
-    #size = lt.size(artworks)
     size = tamaño
 
     if size > 0:
@@ -107,13 +106,13 @@ def printArtworkDate(artworks,año_inicial, año_final,tamaño):
     
         print('Las primeras 3 obras de arte encontradas en el rango son: \n')
         for artwork in lt.iterator(first_3_artworks):
-            #print(artwork)
+
             print("Titulo: " + str(artwork["Title"]) + ", Año de adquisición: " + str(artwork["DateAcquired"]) + ", Artista/s : " + str(artwork["Artists"]["elements"]) + ", Medio: "+ str(artwork["Medium"]) + ", Dimensiones: " + str(artwork["Dimensions"]))
             
 
         print('\nLas últimas 3 obras de arte encontradas en el rango son: \n ')
         for artwork in lt.iterator(last_3_artworks):
-            #print(artwork)
+
             print("Titulo: " + str(artwork["Title"]) + ", Año de adquisición: " + str(artwork["DateAcquired"]) + ", Artista/s : " + str(artwork["Artists"]["elements"]) + ", Medio: "+ str(artwork["Medium"]) + ", Dimensiones: " + str(artwork["Dimensions"]))
         
     else:

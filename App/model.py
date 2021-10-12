@@ -439,6 +439,7 @@ def getArtworkYear(catalog, fecha_i, fecha_f):
                     lt.addLast(artwork_inrange, artwork)
 
     size = lt.size(artwork_inrange)
+    sortArtwork(artwork_inrange)
     return artwork_inrange, size
 
 
@@ -775,6 +776,15 @@ def cmpTranspCost(cost1,cost2):
 
     return int(cost1['Cost']) > int(cost2['Cost'])
 
+def cmpartworkyear(artwork1,artwork2):
+
+    if artwork1['DateAcquired'] != '' and artwork2['DateAcquired'] != '':
+
+        date_1 = d.date.fromisoformat(artwork1['DateAcquired'])
+        date_2 = d.date.fromisoformat(artwork2['DateAcquired'])
+
+        return date_1 < date_2
+
 
 # Funciones de ordenamiento
 
@@ -789,3 +799,7 @@ def sortTransportation(transp_cost):
 def sortNationalitysize(nationalities):
     
     ms.sort(nationalities, cmpNationalitysize)
+
+def sortArtwork(artwork_inrange):
+
+    ms.sort(artwork_inrange, cmpartworkyear)
