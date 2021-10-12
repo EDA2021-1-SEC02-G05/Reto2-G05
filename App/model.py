@@ -100,6 +100,14 @@ def newCatalog():
     """
     Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
     """
+    catalog['Medium'] = mp.newMap(100,
+                                   maptype='PROBING',
+                                   loadfactor= 0.5,
+                                   comparefunction=compareMapArtistDate)
+
+    """
+    Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
+    """
     catalog['ArtistTecnique'] = mp.newMap(100,
                                 maptype='PROBING',
                                 loadfactor=0.8,
@@ -168,12 +176,49 @@ def addArtwork(catalog,artwork):
 
     artist_id = artwork['ConstituentID'].split(',')
     
+    #Lab 5
+    medium = artwork['Medium']
+    addMedium(catalog, medium, artwork)
+    
     for id in artist_id:
 
         addArtistTecnique(catalog,id,artwork)
         addArtistNation(catalog,id,artwork)
-        sortTecnique(catalog, id)
-    
+
+def newMedium():
+    """
+    Crea una nueva estructura para modelar los libros de un autor
+    y su promedio de ratings. Se crea una lista para guardar los
+    libros de dicho autor.
+    """
+    medium = {
+              "Artworks": None}
+
+    medium['Artworks'] = lt.newList('ARRAY_LIST', compareMediums)
+    return medium
+
+def addMedium(catalog, medium_name, artwork):
+    """
+    Esta función adiciona una obra de arte a un maps que los clasifica por medio.
+    """
+    artwork_filtrada = {'ObjectID':artwork['ObjectID'], 
+                    'Title':artwork['Title'], 
+                    'ConstituentID':artwork['ConstituentID'],
+                    'Date': artwork[ 'Date'],
+                    'Medium':artwork['Medium'] }
+
+    mediums = catalog['Medium']
+    existmedium = mp.contains(mediums, medium_name)
+    if existmedium:
+        entry = mp.get(mediums, medium_name)
+        medium_value = me.getValue(entry)
+    else:
+        medium_value = newMedium()
+        mp.put(mediums, medium_name, medium_value)
+    lt.addLast(medium_value['Artworks'], artwork_filtrada)
+
+
+
 def sortTecnique(catalog, id):
     pass
 
@@ -456,6 +501,16 @@ def getArtworkYear(catalog, fecha_i, fecha_f):
     elapsed_time_mseg = (stop_time - start_time)*1000
     return artwork_inrange, size, elapsed_time_mseg, purchased
 
+def getMedium(catalog, Medium):
+    
+    #Parte del lab 5
+
+    medium_pareja = mp.get(catalog['Medium'], Medium)
+    if medium_pareja:
+        lista_obras = me.getValue(medium_pareja)
+        sortYear(lista_obras['Artworks'])
+        return lista_obras['Artworks']
+    return None
 
 def getArtistTecnique(catalog, artist_name):
     """
@@ -806,8 +861,14 @@ def cmpartworkyear(artwork1,artwork2):
 
         return date_1 < date_2
 
+def compareMediums():
+    pass
 
 # Funciones de ordenamiento
+
+def sortYear(lista_obras):
+    "lab 5"
+    ms.sort(lista_obras, cmpArtworkYear)
 
 def sortTranspOld(list_old):
 

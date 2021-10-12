@@ -101,6 +101,11 @@ def getArtworkYear(catalog,fechai,fechaf):
     """
     return model.getArtworkYear(catalog,fechai,fechaf)
 
+def getMediumlab5(catalog, medium):
+
+    return model.getMediumlab5(catalog, medium)
+
+
 def getArtistTecnique(catalog, name):
     """
     Retorna las obras de arte de un artista segun su técnica

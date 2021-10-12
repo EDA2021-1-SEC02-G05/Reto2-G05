@@ -43,6 +43,7 @@ def printMenu():
     print("0- Cargar información en el catálogo")
     print("1- Listar cronológicamente los artistas")
     print("2- Listar cronológicamente las adquisiciones")
+    print("9- Obras más antiguas por técinca (lab 5)")
     print("3- Clasificar las obras de una artista por técnica")
     print("4- Numero de obras asociadas a una nacionalidad (lab 6)")
     print("8- Clasificar las obras por nacionalidad de sus creadores")
@@ -269,6 +270,19 @@ while True:
         name = (input('Nombre del artista sobre el cual quiere realizar la consulta: ')).lower()
         tecniques = controller.getArtistTecnique(catalog, name)
         printArtistTecnique(tecniques[0],tecniques[1], name, tecniques[2],tecniques[3])
+
+    elif int(input[0]) == 9:
+
+        "Lab 5: obras mas viejas de una tecnica"
+
+        medio = (input('Medio de las obras que se pretende buscar: ')).lower()
+        numero = int(input('Número de obras más antiguas a buscar: '))
+        respuesta = controller.getMediumlab5(catalog, medio)
+        
+        primeras_n_obras = lt.subList(respuesta, 1, numero)
+        print('Las ' + str(numero)+ ' obras más antiguas para la medio ' + medio + ' son: ')
+        for artwork in lt.iterator(primeras_n_obras):
+            print(artwork)
 
     elif int(inputs[0]) == 4:
 
