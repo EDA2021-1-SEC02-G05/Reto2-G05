@@ -49,10 +49,18 @@ def loadData(catalog):
     start_time = time.process_time()
     loadArtists(catalog)
     loadArtworks(catalog)
+    sortTecnique(catalog)
+    sortArtworkAdDate(catalog)
     stop_time = time.process_time()
     elapsed_time_mseg = (stop_time - start_time)*1000
     
     return elapsed_time_mseg
+    
+def sortTecnique(catalog):
+    return model.sortTecnique(catalog)
+
+def sortArtworkAdDate(catalog):
+    return model.sortArtworkAdDate(catalog)
 
 def loadArtists(catalog):
     """

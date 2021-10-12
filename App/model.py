@@ -172,6 +172,11 @@ def addArtwork(catalog,artwork):
 
         addArtistTecnique(catalog,id,artwork)
         addArtistNation(catalog,id,artwork)
+        sortTecnique(catalog, id)
+    
+def sortTecnique(catalog, id):
+    pass
+
 
 def addArtistTecnique(catalog,id,artwork):
     """
@@ -260,9 +265,9 @@ def addMedium(medium, medium_name, artwork):
         medium['TotalMedium'] += 1
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
     
-    mayor = 0
-    if lt.size(medium_value['Artworks']) > mayor: #TODO PROBLEMA AQUI, CONTADOR SE REINICIA Y NO CUENTAA
-            mayor = lt.size(medium_value['Artworks'])
+    mayor = lt.size(medium_value['Artworks'])
+
+    if mayor > 0: #TODO PROBLEMA AQUI, CONTADOR SE REINICIA Y NO CUENTAA
             medium['MediumMayor'] = medium_value
 
 def addArtistNation(catalog,id,artwork):
@@ -358,6 +363,9 @@ def addArtworkDate(catalog,fecha_ad, artwork):
             date_value = newArtworkDate(year_int)
             mp.put(dates_map, year_int, date_value)
         lt.addLast(date_value['Artworks'], artwork_filt)
+        
+def sortArtworkAdDate(catalog):
+    pass
 
 def newArtworkDate(date):
 
@@ -406,7 +414,7 @@ def getArtistYear(catalog, year_i, year_f):
         if pareja_year:
             year_value = me.getValue(pareja_year)
 
-            for artist in lt.iterator(year_value['Artists']): #TODO: hay alguna forma de concatenar listas de estas sin hacer fors?
+            for artist in lt.iterator(year_value['Artists']): 
                 lt.addLast(artist_inrange,artist)
         
         i += 1
@@ -429,8 +437,7 @@ def getArtworkYear(catalog, fecha_i, fecha_f):
         df = d.datetime(int(fecha_f_sep[0]),int(fecha_f_sep[1]), int(fecha_f_sep[2]))
         pareja_year = mp.get(catalog['ArtworkDates'], i)
         i+=1
-        
-            
+           
         if pareja_year:
             year_value = me.getValue(pareja_year)
 
