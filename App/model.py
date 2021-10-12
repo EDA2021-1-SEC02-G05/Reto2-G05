@@ -490,15 +490,16 @@ def getNationality(catalog):
         nationality_value = me.getValue(nationality_entry)
 
         artworks = nationality_value['Artworks']
-        #artwork_filtrada = {'Title': artworks['Title'],
-        #                    'Date': artworks['Date'],
-        #                    'Medium': artworks['Medium'],
-        #                    'Dimensions': artworks['Dimensions']}
+        #artwork_filtrada = {'Title': artworks['elements']['Title'],
+        #                    'Date': artworks['elements']['Date'],
+        #                    'Medium': artworks['elements']['Medium'],
+        #                    'Dimensions': artworks['elements']['Dimensions']
+        #                    }
         
         total_obras = lt.size(nationality_value['Artworks'])
         diccionario = {"Nationality": name,
                         "Total works": total_obras,
-                        #"Artwork": artwork_filtrada
+                        "Artwork": artworks
                         }
         lt.addLast(answer, diccionario)
     

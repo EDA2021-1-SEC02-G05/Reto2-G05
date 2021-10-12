@@ -121,23 +121,22 @@ def printArtworkDate(artworks,año_inicial, año_final,tamaño):
 
 def printArtistTec():
     pass
+
 def printArtworkNationality(nationalities):
     print('Las 10 nacionalidades con mayor número de obras son: ')
 
     top10 = lt.subList(nationalities,1, 10)
     top = lt.subList(nationalities,1, 1)
 
-
     for nacionalidad in lt.iterator(top10):
-        tamano = lt.size(nacionalidad['Artworks'])
-        print(nacionalidad['Nationality']+': '+ str(tamano))
+        print(nacionalidad['Nationality'].title()+ " -> Total Obras: "+ str(nacionalidad['Total works']))
     
     for nacionalidad in lt.iterator(top):
-        tamano = lt.size(nacionalidad['Artworks'])
-        print("La nacionalidad con más obras es: "+nacionalidad["Nationality"]+" con un total de "+str(tamano)+" obras.")
+        size = str(nacionalidad['Total works'])
+        print("La nacionalidad con más obras es: "+nacionalidad["Nationality"]+" con un total de "+size+" obras.")
         print("La información de las primeras y ultimas 3 obras de dicha nacionalidad se presenta a continuación:")
-        tresprimeras = lt.subList(nacionalidad['Artworks'], 1, 3)
-        tresultimas = lt.subList(nacionalidad['Artworks'],tamano-2, 3)
+        tresprimeras = lt.subList(nacionalidad['Artwork'], 1, 3)
+        tresultimas = lt.subList(nacionalidad['Artwork'],int(size)-2, 3)
         for artwork in lt.iterator(tresprimeras):
             #print(artwork)
             print("Titulo: " + artwork["Title"] + ", Artista/s : " + str(artwork["Artists"]["elements"])+ ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
@@ -147,7 +146,7 @@ def printArtworkNationality(nationalities):
             print("Titulo: " + artwork["Title"] + ", Artista/s : " + str(artwork["Artists"]["elements"])+ ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
     
     #print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
-
+    
 
 def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
 
@@ -291,7 +290,8 @@ while True:
          
         nationalities = controller.getNationality(catalog)
 
-        print(nationalities)
+        printArtworkNationality(nationalities)
+        #print(nationalities)
 
     elif int(inputs[0]) == 5:
 
