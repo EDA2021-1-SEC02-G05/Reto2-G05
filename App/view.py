@@ -98,10 +98,6 @@ def printArtworkDate(artworks,año_inicial, año_final,tamaño, tiempo, purchase
 
         print ('Se encontraron ' + str(size) + ' obras de arte adquiridas en el rango de ' + str(año_inicial) + ' hasta ' + str(año_final)+ "\n")
         cont = 0
-        #for artwork in lt.iterator(artworks):
-            
-        #    if 'purchase' in artwork['CreditLine'].lower():
-        #       cont += 1
 
         print('Se encontraron ' + str(purchased) + ' obras que fueron compradas.')
     
