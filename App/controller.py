@@ -49,8 +49,8 @@ def loadData(catalog):
     start_time = time.process_time()
     loadArtists(catalog)
     loadArtworks(catalog)
-    sortTecnique(catalog)
-    sortArtworkAdDate(catalog)
+    #sortTecnique(catalog)
+    #sortArtworkAdDate(catalog)
     stop_time = time.process_time()
     elapsed_time_mseg = (stop_time - start_time)*1000
     

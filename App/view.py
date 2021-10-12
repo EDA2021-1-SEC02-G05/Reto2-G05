@@ -271,7 +271,7 @@ while True:
         tecniques = controller.getArtistTecnique(catalog, name)
         printArtistTecnique(tecniques[0],tecniques[1], name, tecniques[2],tecniques[3])
 
-    elif int(input[0]) == 9:
+    elif int(inputs[0]) == 9:
 
         "Lab 5: obras mas viejas de una tecnica"
 

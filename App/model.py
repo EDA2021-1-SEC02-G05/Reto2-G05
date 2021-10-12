@@ -103,7 +103,7 @@ def newCatalog():
     catalog['Medium'] = mp.newMap(100,
                                    maptype='PROBING',
                                    loadfactor= 0.5,
-                                   comparefunction=compareMapArtistDate)
+                                   comparefunction=compareMapMediums)
 
     """
     Este indice crea un map cuya llave es el artista y dentro se encuentra otro mapa que 
@@ -178,7 +178,7 @@ def addArtwork(catalog,artwork):
     
     #Lab 5
     medium = artwork['Medium']
-    addMedium(catalog, medium, artwork)
+    addMediumlab5(catalog, medium, artwork)
     
     for id in artist_id:
 
@@ -197,7 +197,7 @@ def newMedium():
     medium['Artworks'] = lt.newList('ARRAY_LIST', compareMediums)
     return medium
 
-def addMedium(catalog, medium_name, artwork):
+def addMediumlab5(catalog, medium_name, artwork):
     """
     Esta función adiciona una obra de arte a un maps que los clasifica por medio.
     """
@@ -213,7 +213,7 @@ def addMedium(catalog, medium_name, artwork):
         entry = mp.get(mediums, medium_name)
         medium_value = me.getValue(entry)
     else:
-        medium_value = newMedium()
+        medium_value = newMedium(medium_name)
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
 
@@ -501,7 +501,7 @@ def getArtworkYear(catalog, fecha_i, fecha_f):
     elapsed_time_mseg = (stop_time - start_time)*1000
     return artwork_inrange, size, elapsed_time_mseg, purchased
 
-def getMedium(catalog, Medium):
+def getMediumlab5(catalog, Medium):
     
     #Parte del lab 5
 
@@ -531,7 +531,7 @@ def getArtistTecnique(catalog, artist_name):
 
             if lt.size(tecnique['Artworks']) > mayor_num:
                 mayor_num = lt.size(tecnique['Artworks'])
-                mayor_elem = tecnique #TODO: debe haber una forma más eficiente, lo se
+                mayor_elem = tecnique 
 
     stop_time = time.process_time()
     elapsed_time_mseg = (stop_time - start_time)*1000
@@ -861,6 +861,9 @@ def cmpartworkyear(artwork1,artwork2):
 
         return date_1 < date_2
 
+def cmpArtworkDate(artwork1,artwork2):
+    return int(artwork1['Date']) < int(artwork2['Date'])
+
 def compareMediums():
     pass
 
@@ -868,7 +871,7 @@ def compareMediums():
 
 def sortYear(lista_obras):
     "lab 5"
-    ms.sort(lista_obras, cmpArtworkYear)
+    ms.sort(lista_obras, cmpArtworkDate)
 
 def sortTranspOld(list_old):
 
