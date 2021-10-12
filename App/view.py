@@ -97,7 +97,6 @@ def printArtworkDate(artworks,año_inicial, año_final,tamaño, tiempo, purchase
         last_3_artworks = lt.subList(artworks, size - 2, 3)
 
         print ('Se encontraron ' + str(size) + ' obras de arte adquiridas en el rango de ' + str(año_inicial) + ' hasta ' + str(año_final)+ "\n")
-        cont = 0
 
         print('Se encontraron ' + str(purchased) + ' obras que fueron compradas.')
     
@@ -117,8 +116,6 @@ def printArtworkDate(artworks,año_inicial, año_final,tamaño, tiempo, purchase
         print('No se encontraron obras de arte adquiridas en este rango de años')
 
 
-def printArtistTec():
-    pass
 
 def printArtworkNationality(nationalities):
     print('Las 10 nacionalidades con mayor número de obras son: ')
@@ -136,11 +133,11 @@ def printArtworkNationality(nationalities):
         tresprimeras = lt.subList(nacionalidad['Artwork'], 1, 3)
         tresultimas = lt.subList(nacionalidad['Artwork'],int(size)-2, 3)
         for artwork in lt.iterator(tresprimeras):
-            #print(artwork)
+
             print("Titulo: " + artwork["Title"] + ", Artista/s : " + str(artwork["Artists"]["elements"])+ ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
         
         for artwork in lt.iterator(tresultimas):
-            #print(artwork)
+
             print("Titulo: " + artwork["Title"] + ", Artista/s : " + str(artwork["Artists"]["elements"])+ ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
     
     #print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
