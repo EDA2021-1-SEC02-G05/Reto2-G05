@@ -65,7 +65,7 @@ def loadData(catalog):
     """
     controller.loadData(catalog)
 
-def printArtistDate(artist,año_inicial, año_final):
+def printArtistDate(artist,año_inicial, año_final, tiempo):
     tamano = lt.size(artist)
     
     if tamano > 0 :
@@ -84,10 +84,11 @@ def printArtistDate(artist,año_inicial, año_final):
         for artist in lt.iterator(last_3_artists):
             print("Nombre: " + artist["DisplayName"] + ", Año de nacimiento: " + artist["BeginDate"] + ", Año de muerte: " + artist["EndDate"] + ", Nacionalidad: "+ artist["Nationality"] + ", Género: " + artist["Gender"])
         
+        print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
     else:
         print('No se encontraron artistas nacidos en este rango de años')
 
-def printArtworkDate(artworks,año_inicial, año_final,tamaño):
+def printArtworkDate(artworks,año_inicial, año_final,tamaño, tiempo, purchased):
     
     size = tamaño
 
@@ -97,12 +98,12 @@ def printArtworkDate(artworks,año_inicial, año_final,tamaño):
 
         print ('Se encontraron ' + str(size) + ' obras de arte adquiridas en el rango de ' + str(año_inicial) + ' hasta ' + str(año_final)+ "\n")
         cont = 0
-        for artwork in lt.iterator(artworks):
+        #for artwork in lt.iterator(artworks):
             
-            if 'purchase' in artwork['CreditLine'].lower():
-                cont += 1
+        #    if 'purchase' in artwork['CreditLine'].lower():
+        #       cont += 1
 
-        print('Se encontraron ' + str(cont) + ' obras que fueron compradas.')
+        print('Se encontraron ' + str(purchased) + ' obras que fueron compradas.')
     
         print('Las primeras 3 obras de arte encontradas en el rango son: \n')
         for artwork in lt.iterator(first_3_artworks):
@@ -115,6 +116,7 @@ def printArtworkDate(artworks,año_inicial, año_final,tamaño):
 
             print("Titulo: " + str(artwork["Title"]) + ", Año de adquisición: " + str(artwork["DateAcquired"]) + ", Artista/s : " + str(artwork["Artists"]["elements"]) + ", Medio: "+ str(artwork["Medium"]) + ", Dimensiones: " + str(artwork["Dimensions"]))
         
+        print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
     else:
         print('No se encontraron obras de arte adquiridas en este rango de años')
 
@@ -148,7 +150,7 @@ def printArtworkNationality(nationalities):
     #print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo))
     
 
-def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
+def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras, tiempo):
 
     if total_obras > 0:
     
@@ -169,7 +171,7 @@ def printArtistTecnique(tecniques_mayor, tamano_tecs, name, total_obras):
             for artwork in lt.iterator(ult3):
                     print("Titulo: " + artwork["Title"] + ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
 
-            #print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo)) 
+            print('El tiempo que tardó en ejecutarse el requerimiento es (mseg): ' + str(tiempo)) 
         else: 
             for artwork in lt.iterator(tecniques_mayor['Artworks']):
                     print("Titulo: " + artwork["Title"] + ", Fecha: "+ artwork["Date"] + ", Medio: "+ artwork["Medium"] + ", Dimensiones: " + artwork["Dimensions"] + '\n')
@@ -249,7 +251,7 @@ while True:
         año_inicial = int(input('Año inicial para el rango de busqueda: '))
         año_final = int(input ('Año final para el rango de busqueda: '))
         artist = controller.getArtistYear(catalog, año_inicial, año_final)
-        printArtistDate(artist,año_inicial, año_final)
+        printArtistDate(artist[0],año_inicial, año_final,artist[1])
         
         
     elif int(inputs[0]) == 2:
@@ -261,8 +263,9 @@ while True:
         artwork = controller.getArtworkYear(catalog, fecha_inicial, fecha_final)
         size = artwork[1]
         artworks = artwork[0]
-        printArtworkDate(artworks, fecha_inicial, fecha_final, size)
-        #print(artwork)
+        tiempo = artwork[2]
+        compradas = artwork[3]
+        printArtworkDate(artworks, fecha_inicial, fecha_final, size, tiempo, compradas)
 
     elif int(inputs[0]) == 3:
 
@@ -270,7 +273,7 @@ while True:
         
         name = (input('Nombre del artista sobre el cual quiere realizar la consulta: ')).lower()
         tecniques = controller.getArtistTecnique(catalog, name)
-        printArtistTecnique(tecniques[0],tecniques[1], name, tecniques[2])
+        printArtistTecnique(tecniques[0],tecniques[1], name, tecniques[2],tecniques[3])
 
     elif int(inputs[0]) == 4:
 
@@ -310,7 +313,6 @@ while True:
 
         artists_inrange = controller.getArtistYear(catalog, año_inicial, año_final)
         proliferos = controller.getProlificArtists(artists_inrange, numero_artistas)
-
 
 
     else:
