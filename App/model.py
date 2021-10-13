@@ -543,8 +543,6 @@ def getArtistTecnique(catalog, artist_name):
 
     stop_time = time.process_time()
     elapsed_time_mseg = (stop_time - start_time)*1000
-
-    print(tecnique_values['MediumMayor'])
     return mayor_elem, tamano_tecs, total_obras, elapsed_time_mseg
 
 
