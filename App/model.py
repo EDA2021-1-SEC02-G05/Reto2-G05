@@ -185,7 +185,7 @@ def addArtwork(catalog,artwork):
         addArtistTecnique(catalog,id,artwork)
         addArtistNation(catalog,id,artwork)
 
-def newMedium():
+def newMediumlab5():
     """
     Crea una nueva estructura para modelar los libros de un autor
     y su promedio de ratings. Se crea una lista para guardar los
@@ -194,7 +194,7 @@ def newMedium():
     medium = {
               "Artworks": None}
 
-    medium['Artworks'] = lt.newList('ARRAY_LIST', compareMediums)
+    medium['Artworks'] = lt.newList('ARRAY_LIST')
     return medium
 
 def addMediumlab5(catalog, medium_name, artwork):
@@ -213,15 +213,26 @@ def addMediumlab5(catalog, medium_name, artwork):
         entry = mp.get(mediums, medium_name)
         medium_value = me.getValue(entry)
     else:
-        medium_value = newMedium(medium_name)
+        medium_value = newMediumlab5()
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
 
+"""
+def sortTecnique(catalog):
+    artists = mp.keySet(catalog['ArtistTecnique'])
 
+    for artist in lt.iterator(artists):
+        artist_tecnique = mp.get(catalog['ArtistTecnique'], artist)
+        tecnique_map = me.getValue(artist_tecnique)
+        tecniques = mp.keySet(tecnique_map)
 
-def sortTecnique(catalog, id):
-    pass
+        for tecnique in lt.iterator(tecniques):
 
+            sortTecSize(tecnique) #TODO: no esta haciendo el sort como deberiaa, no quiere organizar :C
+            medium_mayor = lt.firstElement(tecnique_map)
+            artist['MediumMayor'] = medium_mayor
+
+"""
 
 def addArtistTecnique(catalog,id,artwork):
     """
@@ -247,23 +258,21 @@ def addArtistTecnique(catalog,id,artwork):
         addMedium(artist_value, artwork['Medium'], artwork)
 
     else:
-        artist_value = newArtist(artist['DisplayName'])
+        artist_value = newArtist()
         addMedium(artist_value, artwork['Medium'], artwork)
         mp.put(artists_map, artist['DisplayName'], artist_value)
 
-def newArtist(name):
+def newArtist():
     """
     Crea una nueva estructura para modelar los libros de un autor
     y su promedio de ratings. Se crea una lista para guardar los
     libros de dicho autor.
     """
-    artist_tec = {  'Artist':'',
+    artist_tec = {
                     'TotalArtworks':'',
                     'MediumMayor':None,
                     "Artworks": None,
                     'TotalMedium':0}
-
-    artist_tec['Artworks'] = name
 
     artist_tec['Artworks'] = mp.newMap(200,
                                    maptype='PROBING',
@@ -282,9 +291,11 @@ def newMedium(tec):
     libros de dicho autor.
     """
     medium = {'Tecnique': tec,
-              "Artworks": None}
+               'Size': 1,
+               'Artworks': None}
 
     medium['Artworks'] = lt.newList('ARRAY_LIST')
+
     return medium
 
 
@@ -304,16 +315,13 @@ def addMedium(medium, medium_name, artwork):
     if existmedium:
         entry = mp.get(mediums, medium_name)
         medium_value = me.getValue(entry)
+        medium_value['Size'] += 1
     else:
         medium_value = newMedium(medium_name)
         mp.put(mediums, medium_name, medium_value)
         medium['TotalMedium'] += 1
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
-    
-    mayor = lt.size(medium_value['Artworks'])
 
-    if mayor > 0: #TODO PROBLEMA AQUI, CONTADOR SE REINICIA Y NO CUENTAA
-            medium['MediumMayor'] = medium_value
 
 def addArtistNation(catalog,id,artwork):
     """
@@ -535,6 +543,8 @@ def getArtistTecnique(catalog, artist_name):
 
     stop_time = time.process_time()
     elapsed_time_mseg = (stop_time - start_time)*1000
+
+    print(tecnique_values['MediumMayor'])
     return mayor_elem, tamano_tecs, total_obras, elapsed_time_mseg
 
 
@@ -563,11 +573,6 @@ def getNationality(catalog):
         nationality_value = me.getValue(nationality_entry)
 
         artworks = nationality_value['Artworks']
-        #artwork_filtrada = {'Title': artworks['elements']['Title'],
-        #                    'Date': artworks['elements']['Date'],
-        #                    'Medium': artworks['elements']['Medium'],
-        #                    'Dimensions': artworks['elements']['Dimensions']
-        #                    }
         
         total_obras = lt.size(nationality_value['Artworks'])
         diccionario = {"Nationality": name,
@@ -864,10 +869,15 @@ def cmpartworkyear(artwork1,artwork2):
 def cmpArtworkDate(artwork1,artwork2):
     return int(artwork1['Date']) < int(artwork2['Date'])
 
-def compareMediums():
-    pass
+def cmpTecSize(size1, size2):
+
+    return int(size1['Size']) < int(size2['Size'])
+
 
 # Funciones de ordenamiento
+def sortTecSize(tecnique_map):
+
+    ms.sort(tecnique_map, cmpTecSize)
 
 def sortYear(lista_obras):
     "lab 5"
