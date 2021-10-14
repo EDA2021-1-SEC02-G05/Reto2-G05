@@ -216,7 +216,6 @@ def addMediumlab5(catalog, medium_name, artwork):
         medium_value = newMediumlab5()
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
-
 """
 def sortTecnique(catalog):
     artists = mp.keySet(catalog['ArtistTecnique'])
@@ -224,7 +223,8 @@ def sortTecnique(catalog):
     for artist in lt.iterator(artists):
         artist_tecnique = mp.get(catalog['ArtistTecnique'], artist)
         tecnique_map = me.getValue(artist_tecnique)
-        tecniques = mp.keySet(tecnique_map)
+        print(tecnique_map)
+        tecniques = mp.valueSet(tecnique_map)
 
         for tecnique in lt.iterator(tecniques):
 
@@ -534,6 +534,8 @@ def getArtistTecnique(catalog, artist_name):
         tecnique_values = mp.valueSet(tecnique_map['Artworks'])
         tamano_tecs = mp.size(tecnique_map['Artworks'])
         total_obras = tecnique_map['TotalArtworks']
+
+        print(tecnique_map['MediumMayor'])
 
         for tecnique in lt.iterator(tecnique_values):
 
