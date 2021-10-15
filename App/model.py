@@ -535,7 +535,6 @@ def getArtistTecnique(catalog, artist_name):
         tamano_tecs = mp.size(tecnique_map['Artworks'])
         total_obras = tecnique_map['TotalArtworks']
 
-        print(tecnique_map['MediumMayor'])
 
         for tecnique in lt.iterator(tecnique_values):
 
@@ -780,7 +779,7 @@ def compareObjectID(id1,id2):
     """
     Compara dos ids de dos obras de arte
     """
-    if (id1 == id2):
+    if (int(id1) == int(id2['ObjectID'])):
         return 0
     elif id1 > id2:
         return 1
@@ -800,16 +799,14 @@ def compareMapArtistDate(date1,entry):
     else:
         return -1
 
-def compareArtistsByName(Key_artID, artist_ID):
+def compareArtistsByName(Key_artname, artist_name):
     """
-    Compara dos ID's de artistas. El primero es un string
+    Compara dos nombres de artistas. El primero es un string
     y el segundo un entry de un map
     """
-    arthentry = me.getKey(artist_ID)
-    if (Key_artID == arthentry):
+    arthentry = me.getKey(artist_name)
+    if (Key_artname == arthentry):
         return 0
-    elif (Key_artID > arthentry):
-        return 1
     else:
         return -1
 
