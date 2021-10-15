@@ -216,23 +216,6 @@ def addMediumlab5(catalog, medium_name, artwork):
         medium_value = newMediumlab5()
         mp.put(mediums, medium_name, medium_value)
     lt.addLast(medium_value['Artworks'], artwork_filtrada)
-"""
-def sortTecnique(catalog):
-    artists = mp.keySet(catalog['ArtistTecnique'])
-
-    for artist in lt.iterator(artists):
-        artist_tecnique = mp.get(catalog['ArtistTecnique'], artist)
-        tecnique_map = me.getValue(artist_tecnique)
-        print(tecnique_map)
-        tecniques = mp.valueSet(tecnique_map)
-
-        for tecnique in lt.iterator(tecniques):
-
-            sortTecSize(tecnique) #TODO: no esta haciendo el sort como deberiaa, no quiere organizar :C
-            medium_mayor = lt.firstElement(tecnique_map)
-            artist['MediumMayor'] = medium_mayor
-
-"""
 
 def addArtistTecnique(catalog,id,artwork):
     """
