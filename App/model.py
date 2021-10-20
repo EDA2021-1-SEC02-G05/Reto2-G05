@@ -30,6 +30,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import map as mp
 from DISClib.DataStructures import mapentry as me
 from DISClib.Algorithms.Sorting import mergesort as ms
+from DISClib.Algorithms.Sorting import mergesort_req6 as ms6
 assert cf
 import datetime as d
 import time
@@ -400,8 +401,6 @@ def addArtworkDate(catalog,fecha_ad, artwork):
             mp.put(dates_map, year_int, date_value)
         lt.addLast(date_value['Artworks'], artwork_filt)
         
-def sortArtworkAdDate(catalog):
-    pass
 
 def newArtworkDate(date):
 
@@ -741,9 +740,27 @@ def cost_volume(artwork):
         return cost_vol4
 
 
-def getProlificArtists(artists_inrange, num):
-    
-    pass
+
+def getProlificArtists(artists_inrange, catalog ,num):
+    artists_inrange_map = lt.newList('ARRAY_LIST')
+
+
+    for artist in artists_inrange['elements']:
+
+        artist_map = mp.get(catalog['ArtistTecnique'], artist['DisplayName'])
+
+        if artist_map:
+            artist_value = me.getValue(artist_map)
+
+            lt.addLast(artists_inrange_map, artist_value)
+
+    print(artists_inrange_map)
+
+    sortProlificArtist(artists_inrange_map)
+
+    sublist = lt.subList(artists_inrange_map, 1, num)
+
+    return sublist
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
@@ -853,8 +870,26 @@ def cmpTecSize(size1, size2):
 
     return int(size1['Size']) < int(size2['Size'])
 
+def cmpProlific(artist1, artist2):
+
+    if artist1['TotalArtworks'] > artist2['TotalArtworks']:
+
+        return 0
+    
+    elif artist1['TotalArtworks'] == artist2['TotalArtworks']:
+
+        if artist1['TotalMedium'] > artist2['TotalMedium']:
+
+            return 0
+
+    else:
+        return -1
 
 # Funciones de ordenamiento
+def sortProlificArtist(artistrange):
+
+    ms6.sort(artistrange, cmpProlific)
+
 def sortTecSize(tecnique_map):
 
     ms.sort(tecnique_map, cmpTecSize)

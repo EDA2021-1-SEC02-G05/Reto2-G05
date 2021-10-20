@@ -54,16 +54,12 @@ def loadData(catalog):
     
     return elapsed_time_mseg
 
-
-def sortArtworkAdDate(catalog):
-    return model.sortArtworkAdDate(catalog)
-
 def loadArtists(catalog):
     """
     Carga los artistas del archivo.  Por cada artista se indica al
     modelo que debe adicionarlo al catalogo.
     """
-    booksfile = cf.data_dir + 'Artists-utf8-20pct.csv'
+    booksfile = cf.data_dir + 'Artists-utf8-large.csv'
     input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
     for artist in input_file:
         model.addArtist(catalog, artist)
@@ -73,7 +69,7 @@ def loadArtworks(catalog):
     Carga todas las obras de arte del archivo e indica al modelo
     que los adicione al catalogo
     """
-    tagsfile = cf.data_dir + 'Artworks-utf8-20pct.csv'
+    tagsfile = cf.data_dir + 'Artworks-utf8-large.csv'
     input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
     
     for artwork in input_file:
@@ -124,6 +120,6 @@ def getTranspCost(catalog, dpto):
 
     return model.getTranspCost(catalog, dpto)
 
-def getProlificArtists(artists_inrange, num):
+def getProlificArtists(artists_inrange,catalog, num):
 
-    return model.getProlificArtists(artists_inrange, num)
+    return model.getProlificArtists(artists_inrange,catalog, num)

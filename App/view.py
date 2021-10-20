@@ -311,7 +311,7 @@ while True:
 
         dpto = (input('Ingrese el departamento del que quiere calcular el costo de transporte de sus obras: ')).lower()
         transport = controller.getTranspCost(catalog, dpto)
-        printTransportationCost(transport[0], transport[1] ,transport[2], transport[3],dpto, transport[4])
+        printTransportationCost(transport[0], transport[1],transport[2], transport[3],dpto, transport[4])
 
     elif int(inputs[0]) == 6:
         'Requerimiento 6: Artistas más prolíferos '
@@ -321,7 +321,8 @@ while True:
         año_final = int(input('Año final para el rango de busqueda: '))
 
         artists_inrange = controller.getArtistYear(catalog, año_inicial, año_final)
-        proliferos = controller.getProlificArtists(artists_inrange, numero_artistas)
+        proliferos = controller.getProlificArtists(artists_inrange, catalog, numero_artistas)
+        print(proliferos)
 
 
     else:
